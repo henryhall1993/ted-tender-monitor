@@ -3,6 +3,10 @@ import csv
 import os
 import time
 
+import sys
+print("Python version:", sys.version)
+print("Starting parser...")
+print("API key present:", bool(os.environ.get("ANTHROPIC_API_KEY")))
 client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
 INPUT_CSV = "results/ted_medical_devices.csv"
