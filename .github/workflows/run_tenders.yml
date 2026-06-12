@@ -2,10 +2,8 @@ name: TED Tender Monitor
 
 on:
   schedule:
-    # Runs every Monday at 7am UTC (Coordinated Universal Time)
     - cron: '0 7 * * 1'
   workflow_dispatch:
-    # This allows you to run it manually anytime from GitHub
 
 jobs:
   fetch-and-parse:
@@ -23,13 +21,21 @@ jobs:
       - name: Install dependencies
         run: pip install anthropic requests
 
-      - name: Run fetcher
+      - name: Run TED fetcher
         run: python scripts/fetcher.py
 
-      - name: Run parser
+      - name: Run UK fetcher
+        run: python scripts/uk_fetcher.py
+
+      - name: Run parser on TED results
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scripts/parser.py
+
+      - name: Run parser on UK results
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/uk_parser.py
 
       - name: Save results to repository
         run: |
