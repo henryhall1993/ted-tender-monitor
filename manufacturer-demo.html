@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manufacturer Dashboard — MedTender Watch Demo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy:    #0f1f3d;
+    --navy-mid:#1a2f54;
+    --blue:    #2563eb;
+    --blue-lt: #dbeafe;
+    --blue-dk: #1d4ed8;
+    --teal:    #0d9488;
+    --teal-lt: #ccfbf1;
+    --amber:   #d97706;
+    --amber-lt:#fef3c7;
+    --red:     #dc2626;
+    --red-lt:  #fee2e2;
+    --green:   #16a34a;
+    --green-lt:#dcfce7;
+    --slate:   #64748b;
+    --border:  #e2e8f0;
+    --bg:      #f8fafc;
+    --white:   #ffffff;
+    --text:    #0f172a;
+    --text-2:  #475569;
+    --text-3:  #94a3b8;
+    --mono:    'DM Mono', monospace;
+    --sans:    'Inter', sans-serif;
+    --radius:  10px;
+    --shadow:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── Site header ── */
+  .site-header {
+    background: var(--navy);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+  .site-logo {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -.01em;
+  }
+  .site-logo span { color: #60a5fa; }
+  .demo-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.12);
+    color: rgba(255,255,255,.8);
+    font-family: var(--mono);
+  }
+  .site-nav { display: flex; gap: 8px; }
+  .site-nav a {
+    font-size: 13px;
+    color: rgba(255,255,255,.7);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: background .15s;
+  }
+  .site-nav a:hover { background: rgba(255,255,255,.1); color: #fff; }
+
+  /* ── Demo banner ── */
+  .demo-banner {
+    background: linear-gradient(135deg, var(--navy-mid), #1e3a6e);
+    color: #fff;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .demo-banner-left h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .demo-banner-left p {
+    font-size: 13px;
+    color: rgba(255,255,255,.7);
+  }
+  .demo-banner-right {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .btn-white {
+    font-size: 13px;
+    padding: 7px 16px;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--navy);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-outline-white {
+    font-size: 13px;
+    padding: 7px 16px;
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.4);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  /* ── App shell ── */
+  .app {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+
+  /* ── Account header ── */
+  .account-header {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .account-header-left { display: flex; align-items: center; gap: 12px; }
+  .account-avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .account-name { font-size: 15px; font-weight: 600; color: var(--text); }
+  .account-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  .account-header-right { display: flex; align-items: center; gap: 10px; }
+  .plan-badge {
+    font-size: 11px; padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--green-lt); color: var(--green);
+    font-weight: 500;
+  }
+  .updated-text { font-size: 12px; color: var(--text-3); }
+
+  /* ── Nav tabs ── */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .nav-tab {
+    font-size: 13px;
+    padding: 10px 18px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: color .15s;
+    margin-bottom: -1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 500; }
+  .tab-count {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: var(--blue-lt);
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  /* ── Views ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── Metrics grid ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 680px) { .metrics { grid-template-columns: repeat(2,1fr); } }
+  .metric-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+  .metric-label { font-size: 12px; color: var(--text-2); margin-bottom: 6px; }
+  .metric-value { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; margin-bottom: 4px; }
+  .metric-sub { font-size: 11px; color: var(--text-3); }
+  .metric-up { color: var(--green); font-size: 11px; display: flex; align-items: center; gap: 3px; }
+
+  /* ── Banners ── */
+  .banner {
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .banner-green { background: var(--green-lt); color: var(--green); }
+  .banner-amber { background: var(--amber-lt); color: var(--amber); }
+  .banner-blue  { background: var(--blue-lt);  color: var(--blue);  }
+
+  /* ── Section header ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .section-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  /* ── Filter bar ── */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-bar select, .filter-bar input {
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text);
+    font-size: 12px;
+    font-family: var(--sans);
+  }
+  .filter-bar select:focus, .filter-bar input:focus { outline: none; border-color: var(--blue); }
+  .sort-pills { display: flex; gap: 5px; margin-bottom: 14px; }
+  .sort-pill {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+  .sort-pill.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+  /* ── Tender cards ── */
+  .tender-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    transition: border-color .15s;
+  }
+  .tender-card:hover { border-color: #93c5fd; }
+  .tender-card.urgent {
+    border-left: 3px solid var(--amber);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .tc-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .tc-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
+  .badge-row { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; flex-shrink: 0; }
+  .badge {
+    font-size: 11px; padding: 3px 9px;
+    border-radius: 20px; font-weight: 500; white-space: nowrap;
+  }
+  .b-eu     { background: var(--blue-lt);  color: var(--blue);  }
+  .b-uk     { background: var(--green-lt); color: var(--green); }
+  .b-high   { background: var(--green-lt); color: var(--green); }
+  .b-med    { background: var(--amber-lt); color: var(--amber); }
+  .b-low    { background: var(--bg);       color: var(--text-2);}
+  .b-urgent { background: var(--amber-lt); color: var(--amber); }
+  .b-new    { background: var(--teal-lt);  color: var(--teal);  }
+  .tc-meta {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .meta-item { font-size: 12px; color: var(--text-2); display: flex; align-items: center; gap: 4px; }
+  .meta-urgent { color: var(--amber); font-weight: 500; }
+  .kw-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+  .kw { font-size: 10px; padding: 2px 7px; border-radius: 10px; background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+  .tc-summary {
+    font-size: 13px; color: var(--text-2); line-height: 1.6;
+    border-top: 1px solid var(--bg);
+    padding-top: 10px; margin-bottom: 10px;
+  }
+  .tc-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    font-size: 12px; padding: 6px 14px;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--white); color: var(--text);
+    cursor: pointer; font-family: var(--sans);
+    text-decoration: none; display: inline-flex;
+    align-items: center; gap: 5px;
+    transition: background .1s;
+  }
+  .btn:hover { background: var(--bg); }
+  .btn-primary {
+    background: var(--blue); color: #fff;
+    border-color: var(--blue);
+  }
+  .btn-primary:hover { background: var(--blue-dk); }
+  .dist-status {
+    margin-left: auto; font-size: 11px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .dist-missing { color: var(--amber); }
+  .dist-ok { color: var(--green); }
+
+  /* ── Distributor cards ── */
+  .dist-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+  }
+  .dc-top {
+    display: flex; align-items: flex-start;
+    gap: 12px; margin-bottom: 12px;
+  }
+  .dc-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; flex-shrink: 0;
+  }
+  .av-blue   { background: var(--blue-lt);  color: var(--blue);  }
+  .av-teal   { background: var(--teal-lt);  color: var(--teal);  }
+  .av-purple { background: #ede9fe;          color: #5b21b6;      }
+  .dc-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .dc-sub  { font-size: 12px; color: var(--text-2); }
+  .dc-score { margin-left: auto; text-align: right; }
+  .dc-pct { font-size: 22px; font-weight: 600; color: var(--green); }
+  .dc-lbl { font-size: 11px; color: var(--text-3); }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .tag {
+    font-size: 11px; padding: 3px 8px;
+    border-radius: 20px; white-space: nowrap;
+  }
+  .t-country { background: var(--bg);      color: var(--text-2); border: 1px solid var(--border); }
+  .t-cat     { background: var(--blue-lt); color: var(--blue);   }
+  .t-reg     { background: var(--teal-lt); color: var(--teal);   }
+  .t-excl    { background: var(--amber-lt);color: var(--amber);  }
+  .dc-reasons { margin-bottom: 10px; }
+  .dc-reason {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--text-2); margin-bottom: 4px; line-height: 1.5;
+  }
+  .reason-ok   { color: var(--green); flex-shrink: 0; margin-top: 1px; }
+  .reason-warn { color: var(--amber); flex-shrink: 0; margin-top: 1px; }
+  .dc-tenders {
+    background: var(--bg); border-radius: 8px;
+    padding: 8px 12px; margin-bottom: 10px;
+    font-size: 12px; color: var(--text-2);
+  }
+  .dc-tenders strong { color: var(--text); }
+  .dc-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .fee-note { font-size: 11px; color: var(--text-3); margin-left: auto; }
+
+  /* ── Account tab ── */
+  .account-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+  .ac-title {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    margin-bottom: 12px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ac-row {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; padding: 8px 0;
+    border-bottom: 1px solid var(--bg);
+    font-size: 13px; gap: 12px;
+  }
+  .ac-row:last-child { border-bottom: none; }
+  .ac-label { color: var(--text-2); }
+  .ac-value { color: var(--text); font-weight: 500; text-align: right; }
+  .ac-value.green { color: var(--green); }
+  .profile-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .mono-tag {
+    font-size: 10px; padding: 2px 7px;
+    border-radius: 6px; background: var(--bg);
+    color: var(--text-2); border: 1px solid var(--border);
+    font-family: var(--mono);
+  }
+
+  /* ── Footer ── */
+  .page-footer {
+    text-align: center;
+    padding: 32px 16px;
+    font-size: 12px;
+    color: var(--text-3);
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+  }
+  .page-footer a { color: var(--blue); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-logo">Med<span>Tender</span>Watch <span class="demo-pill">DEMO</span></div>
+  <nav class="site-nav">
+    <a href="index.html">← Back to all tenders</a>
+    <a href="distributor-demo.html">Distributor view</a>
+  </nav>
+</header>
+
+<div class="demo-banner">
+  <div class="demo-banner-left">
+    <h2>Manufacturer dashboard — interactive demo</h2>
+    <p>This is what a subscribed US medical device manufacturer sees every Monday morning. Data shown is representative — your live dashboard reflects your actual product profile.</p>
+  </div>
+  <div class="demo-banner-right">
+    <a href="#" class="btn-white">Request early access</a>
+    <a href="index.html" class="btn-outline-white">View all tenders</a>
+  </div>
+</div>
+
+<div class="app">
+
+  <div class="account-header">
+    <div class="account-header-left">
+      <div class="account-avatar">GS</div>
+      <div>
+        <div class="account-name">US Medical Gas &amp; Suction Manufacturer</div>
+        <div class="account-sub">Manufacturer account &nbsp;·&nbsp; United States &nbsp;·&nbsp; Medical gas systems, suction &amp; vacuum solutions</div>
+      </div>
+    </div>
+    <div class="account-header-right">
+      <span class="plan-badge">✓ Pro subscriber</span>
+      <span class="updated-text">Updated Mon 9 Jun 2026</span>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('tenders')">
+      My tenders <span class="tab-count">29</span>
+    </button>
+    <button class="nav-tab" onclick="showTab('distributors')">
+      Find distributors <span class="tab-count">3</span>
+    </button>
+    <button class="nav-tab" onclick="showTab('account')">
+      My profile
+    </button>
+  </div>
+
+  <!-- ── TENDERS TAB ── -->
+  <div id="tab-tenders" class="view active">
+
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-label">Matched tenders</div>
+        <div class="metric-value">29</div>
+        <div class="metric-up">↑ 4 new this week</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Closing within 30 days</div>
+        <div class="metric-value">7</div>
+        <div class="metric-sub">Require immediate attention</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total opportunity value</div>
+        <div class="metric-value">€367M</div>
+        <div class="metric-sub">Where values disclosed</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Countries with matches</div>
+        <div class="metric-value">14</div>
+        <div class="metric-sub">Across EU + UK</div>
+      </div>
+    </div>
+
+    <div class="banner banner-green">
+      ✦ 4 new tenders matched your product profile since last Monday — shown first below
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Matched tenders — ranked by relevance</div>
+    </div>
+
+    <div class="filter-bar">
+      <select>
+        <option>All relevance levels</option>
+        <option>3★ high match only</option>
+        <option>2★ and above</option>
+      </select>
+      <select>
+        <option>All sources</option>
+        <option>EU (TED)</option>
+        <option>UK (Find a Tender)</option>
+      </select>
+      <select>
+        <option>Any deadline</option>
+        <option>Closing in 7 days</option>
+        <option>Closing in 30 days</option>
+        <option>Closing in 60 days</option>
+      </select>
+      <select>
+        <option>All countries</option>
+        <option>Germany</option>
+        <option>Finland</option>
+        <option>United Kingdom</option>
+        <option>Norway</option>
+        <option>Switzerland</option>
+      </select>
+    </div>
+
+    <div class="sort-pills">
+      <span style="font-size:12px;color:var(--text-2);line-height:28px;margin-right:4px">Sort:</span>
+      <button class="sort-pill active">Relevance</button>
+      <button class="sort-pill">Deadline — soonest first</button>
+      <button class="sort-pill">Most recently published</button>
+    </div>
+
+    <!-- Card 1 — high match, new -->
+    <div class="tender-card">
+      <div class="tc-top">
+        <div class="tc-title">Finland — Gas-therapy and respiratory devices</div>
+        <div class="badge-row">
+          <span class="badge b-new">New this week</span>
+          <span class="badge b-eu">EU</span>
+          <span class="badge b-high">3★ high match</span>
+        </div>
+      </div>
+      <div class="tc-meta">
+        <span class="meta-item">🏥 North Ostrobothnia Wellbeing Services County</span>
+        <span class="meta-item">📍 Finland</span>
+        <span class="meta-item">📅 Deadline: 30 Jan 2026</span>
+      </div>
+      <div class="kw-row">
+        <span class="kw">gas therapy</span>
+        <span class="kw">oxygen concentrators</span>
+        <span class="kw">suction units</span>
+        <span class="kw">respiratory</span>
+      </div>
+      <div class="tc-summary">North Ostrobothnia Wellbeing Services County is procuring gas therapy and respiratory devices including oxygen concentrators, portable suction units, and related accessories for regional healthcare facilities. Direct match to core product range.</div>
+      <div class="tc-actions">
+        <a class="btn btn-primary" href="https://ted.europa.eu/en/notice/-/detail/839836-2025" target="_blank">View tender ↗</a>
+        <button class="btn">Bid strategy</button>
+        <span class="dist-status dist-missing">⚠ No Finnish distributor — find one</span>
+      </div>
+    </div>
+
+    <!-- Card 2 — urgent -->
+    <div class="tender-card urgent">
+      <div class="tc-top">
+        <div class="tc-title">Czechia — Anaesthesia and resuscitation devices</div>
+        <div class="badge-row">
+          <span class="badge b-urgent">Closes in 18 days</span>
+          <span class="badge b-eu">EU</span>
+          <span class="badge b-med">2★ good match</span>
+        </div>
+      </div>
+      <div class="tc-meta">
+        <span class="meta-item">🏥 Fakultní nemocnice Ostrava</span>
+        <span class="meta-item">📍 Czechia</span>
+        <span class="meta-item meta-urgent">📅 Deadline: 28 Jan 2026</span>
+      </div>
+      <div class="kw-row">
+        <span class="kw">anaesthesia</span>
+        <span class="kw">gas delivery systems</span>
+        <span class="kw">resuscitation</span>
+      </div>
+      <div class="tc-summary">Ostrava University Hospital procuring anaesthesia workstations with integrated gas delivery systems and resuscitation equipment for ICU expansion — 8 units across 2 lots.</div>
+      <div class="tc-actions">
+        <a class="btn btn-primary" href="https://ted.europa.eu/en/notice/-/detail/823812-2025" target="_blank">View tender ↗</a>
+        <button class="btn">Bid strategy</button>
+        <span class="dist-status dist-missing">⚠ No Czech distributor — find one</span>
+      </div>
+    </div>
+
+    <!-- Card 3 — new, distributor covered -->
+    <div class="tender-card">
+      <div class="tc-top">
+        <div class="tc-title">Switzerland — Operating-theatre ceiling supply units</div>
+        <div class="badge-row">
+          <span class="badge b-new">New this week</span>
+          <span class="badge b-eu">EU</span>
+          <span class="badge b-med">2★ good match</span>
+        </div>
+      </div>
+      <div class="tc-meta">
+        <span class="meta-item">🏥 Kantonsspital Aarau</span>
+        <span class="meta-item">📍 Switzerland</span>
+        <span class="meta-item">📅 Deadline: 1 Feb 2026</span>
+      </div>
+      <div class="kw-row">
+        <span class="kw">medical gas outlets</span>
+        <span class="kw">suction connections</span>
+        <span class="kw">ceiling supply units</span>
+      </div>
+      <div class="tc-summary">Kantonsspital Aarau replacing operating theatre ceiling supply units including medical gas outlets and suction connections as part of a full theatre equipment upgrade across 4 operating rooms.</div>
+      <div class="tc-actions">
+        <a class="btn btn-primary" href="https://ted.europa.eu/en/notice/-/detail/814837-2025" target="_blank">View tender ↗</a>
+        <button class="btn">Bid strategy</button>
+        <span class="dist-status dist-ok">✓ DACH distributor matched</span>
+      </div>
+    </div>
+
+    <!-- Card 4 — UK, partial, large value -->
+    <div class="tender-card">
+      <div class="tc-top">
+        <div class="tc-title">UK — Multi-Modality Imaging &amp; Maintenance Framework</div>
+        <div class="badge-row">
+          <span class="badge b-uk">UK</span>
+          <span class="badge b-low">1★ partial match</span>
+        </div>
+      </div>
+      <div class="tc-meta">
+        <span class="meta-item">🏥 NHS National Services Scotland</span>
+        <span class="meta-item">📍 United Kingdom</span>
+        <span class="meta-item">📅 Deadline: 13 Jul 2026</span>
+        <span class="meta-item">💶 £350M framework</span>
+      </div>
+      <div class="kw-row">
+        <span class="kw">vacuum (ancillary)</span>
+        <span class="kw">suction (ancillary)</span>
+      </div>
+      <div class="tc-summary">NHS Scotland national imaging equipment framework — suction and vacuum systems appear as ancillary infrastructure components. Best route is through a prime contractor partnership rather than direct bid. Long deadline allows time to identify the right partner.</div>
+      <div class="tc-actions">
+        <a class="btn btn-primary" href="https://www.find-tender.service.gov.uk/Notice/055415-2026" target="_blank">View tender ↗</a>
+        <button class="btn">Bid strategy</button>
+        <span class="dist-status dist-ok">✓ UK distributor matched</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── DISTRIBUTORS TAB ── -->
+  <div id="tab-distributors" class="view">
+
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-label">Matched distributors</div>
+        <div class="metric-value">3</div>
+        <div class="metric-sub">Across 8 countries</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Territory gaps</div>
+        <div class="metric-value">6</div>
+        <div class="metric-sub">Countries with open tenders</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Introductions sent</div>
+        <div class="metric-value">1</div>
+        <div class="metric-sub">Awaiting response</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Active partnerships</div>
+        <div class="metric-value">0</div>
+        <div class="metric-sub">Via MedTender Watch</div>
+      </div>
+    </div>
+
+    <div class="banner banner-amber">
+      ⚠ Open tenders in Finland, Poland, Belgium, and Norway have no distributor coverage — deadlines approaching
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Recommended distributors — ranked by match score</div>
+    </div>
+
+    <!-- Dist 1 -->
+    <div class="dist-card">
+      <div class="dc-top">
+        <div class="dc-avatar av-blue">MD</div>
+        <div>
+          <div class="dc-name">DACH Medical Gas Distributor</div>
+          <div class="dc-sub">Hamburg, Germany &nbsp;·&nbsp; 45 staff &nbsp;·&nbsp; Est. 2004</div>
+        </div>
+        <div class="dc-score">
+          <div class="dc-pct">94%</div>
+          <div class="dc-lbl">match score</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag t-country">Germany</span>
+        <span class="tag t-country">Austria</span>
+        <span class="tag t-country">Switzerland</span>
+        <span class="tag t-cat">Medical gas systems</span>
+        <span class="tag t-cat">Suction &amp; vacuum</span>
+        <span class="tag t-cat">ICU equipment</span>
+        <span class="tag t-reg">MDR certified</span>
+        <span class="tag t-reg">ISO 13485</span>
+        <span class="tag t-excl">Seeks exclusive</span>
+      </div>
+      <div class="dc-reasons">
+        <div class="dc-reason"><span class="reason-ok">✓</span> Exact product category match — medical gas and suction systems</div>
+        <div class="dc-reason"><span class="reason-ok">✓</span> Covers DACH — 3 active tenders in their territory right now</div>
+        <div class="dc-reason"><span class="reason-ok">✓</span> No conflicting manufacturer in gas or suction category</div>
+        <div class="dc-reason"><span class="reason-ok">✓</span> MDR certified — EU regulatory coverage handled</div>
+      </div>
+      <div class="dc-tenders"><strong>3 shared active tenders:</strong> Switzerland operating theatre · Germany anaesthesia · Austria neonatal ICU</div>
+      <div class="dc-actions">
+        <button class="btn btn-primary">Request introduction ↗</button>
+        <button class="btn">View full profile</button>
+        <span class="fee-note">€500 from you + €250 from distributor</span>
+      </div>
+    </div>
+
+    <!-- Dist 2 -->
+    <div class="dist-card">
+      <div class="dc-top">
+        <div class="dc-avatar av-teal">NS</div>
+        <div>
+          <div class="dc-name">Nordic Medical Equipment Distributor</div>
+          <div class="dc-sub">Stockholm, Sweden &nbsp;·&nbsp; 31 staff &nbsp;·&nbsp; Est. 1998</div>
+        </div>
+        <div class="dc-score">
+          <div class="dc-pct">81%</div>
+          <div class="dc-lbl">match score</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag t-country">Sweden</span>
+        <span class="tag t-country">Norway</span>
+        <span class="tag t-country">Denmark</span>
+        <span class="tag t-country">Finland</span>
+        <span class="tag t-cat">Respiratory devices</span>
+        <span class="tag t-cat">Anaesthesia equipment</span>
+        <span class="tag t-cat">Hospital infrastructure</span>
+        <span class="tag t-reg">MDR certified</span>
+        <span class="tag t-excl">Non-exclusive</span>
+      </div>
+      <div class="dc-reasons">
+        <div class="dc-reason"><span class="reason-ok">✓</span> Strong match — respiratory and anaesthesia gas delivery</div>
+        <div class="dc-reason"><span class="reason-ok">✓</span> Covers all Nordic markets — 6 active matched tenders</div>
+        <div class="dc-reason"><span class="reason-ok">✓</span> Active in hospital framework agreements across the region</div>
+        <div class="dc-reason"><span class="reason-warn">⚠</span> Carries one competing suction product — clarify scope before proceeding</div>
+      </div>
+      <div class="dc-tenders"><strong>6 shared active tenders:</strong> Finland gas therapy (3★) · Norway anaesthesia ×2 · Sweden ventilation ×2 · Denmark ICU</div>
+      <div class="dc-actions">
+        <button class="btn btn-primary">Request introduction ↗</button>
+        <button class="btn">View full profile</button>
+        <span class="fee-note">€500 from you + €250 from distributor</span>
+      </div>
+    </div>
+
+    <!-- Dist 3 -->
+    <div class="dist-card">
+      <div class="dc-top">
+        <div class="dc-avatar av-purple">BM</div>
+        <div>
+          <div class="dc-name">UK Medical Gas &amp; Theatre Equipment Distributor</div>
+          <div class="dc-sub">Manchester, United Kingdom &nbsp;·&nbsp; 22 staff &nbsp;·&nbsp; Est. 2011</div>
+        </div>
+        <div class="dc-score">
+          <div class="dc-pct">76%</div>
+          <div class="dc-lbl">match score</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag t-country">United Kingdom</span>
+        <span class="tag t-country">Ireland</span>
+        <span class="tag t-cat">Medical gas infrastructure</span>
+        <span class="tag t-cat">Suction systems</span>
+        <span class="tag t-cat">Theatre equipment</span>
+        <span class="tag t-reg">UKCA certified</span>
+        <span class="tag t-reg">NHS approved supplier</span>
+        <span class="tag t-excl">Seeks exclusive</span>
+      </div>
+      <div class="dc-reasons">
+        <div class="dc-reason"><span class="reason-ok">✓</span> Direct product match — medical gas infrastructure and suction</div>
+        <div class="dc-reason"><span class="reason-ok">✓</span> NHS approved supplier — essential for UK public procurement</div>
+        <div class="dc-reason"><span class="reason-ok">✓</span> UKCA certified — post-Brexit regulatory requirements handled</div>
+        <div class="dc-reason"><span class="reason-warn">⚠</span> Smaller team — assess capacity for large NHS framework bids</div>
+      </div>
+      <div class="dc-tenders"><strong>2 shared active tenders:</strong> NHS Scotland imaging framework (ancillary) · NHS GGC radiotherapy infrastructure</div>
+      <div class="dc-actions">
+        <button class="btn btn-primary">Request introduction ↗</button>
+        <button class="btn">View full profile</button>
+        <span class="fee-note">€500 from you + €250 from distributor</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── ACCOUNT TAB ── -->
+  <div id="tab-account" class="view">
+
+    <div class="section-header" style="margin-bottom:16px">
+      <div class="section-title">Company profile</div>
+      <button class="btn">Edit profile</button>
+    </div>
+
+    <div class="account-section">
+      <div class="ac-title">Account details</div>
+      <div class="ac-row"><span class="ac-label">Company type</span><span class="ac-value">US Medical Device Manufacturer</span></div>
+      <div class="ac-row"><span class="ac-label">Product category</span><span class="ac-value">Medical gas &amp; suction systems</span></div>
+      <div class="ac-row"><span class="ac-label">Subscription</span><span class="ac-value green">Pro — €400/month</span></div>
+      <div class="ac-row"><span class="ac-label">Data refreshed</span><span class="ac-value">Every Monday 07:00 UTC</span></div>
+      <div class="ac-row"><span class="ac-label">Sources monitored</span><span class="ac-value">TED (EU) + Find a Tender (UK)</span></div>
+    </div>
+
+    <div class="account-section">
+      <div class="ac-title">Product profile — how your tenders are matched</div>
+      <div class="ac-row">
+        <span class="ac-label">Profile description</span>
+        <span class="ac-value" style="font-size:12px;max-width:60%;text-align:right;line-height:1.5">Medical gas and suction solutions — suction regulators, flowmeters, oxygen blenders, portable suction units, medical air compressors, vacuum pumps, manifolds, pipeline accessories</span>
+      </div>
+      <div class="ac-row"><span class="ac-label">CPV codes matched</span></div>
+      <div class="profile-tags">
+        <span class="mono-tag">33157000</span>
+        <span class="mono-tag">33157400</span>
+        <span class="mono-tag">33157600</span>
+        <span class="mono-tag">33172000</span>
+        <span class="mono-tag">42512000</span>
+        <span class="mono-tag">33100000</span>
+      </div>
+      <div class="ac-row" style="margin-top:10px"><span class="ac-label">Keywords matched</span></div>
+      <div class="profile-tags">
+        <span class="tag t-cat">medical gas</span>
+        <span class="tag t-cat">suction</span>
+        <span class="tag t-cat">oxygen</span>
+        <span class="tag t-cat">vacuum</span>
+        <span class="tag t-cat">respiratory</span>
+        <span class="tag t-cat">anaesthesia</span>
+        <span class="tag t-cat">ventilation</span>
+        <span class="tag t-cat">flowmeter</span>
+        <span class="tag t-cat">compressor</span>
+        <span class="tag t-cat">pipeline</span>
+      </div>
+    </div>
+
+    <div class="account-section">
+      <div class="ac-title">Introduction history</div>
+      <div class="ac-row"><span class="ac-label">DACH Medical Gas Distributor</span><span class="ac-value" style="color:var(--amber)">Pending — sent 9 Jun 2026</span></div>
+      <div class="ac-row"><span class="ac-label">Introductions included in plan</span><span class="ac-value">3 per month</span></div>
+      <div class="ac-row"><span class="ac-label">Used this month</span><span class="ac-value">1 of 3</span></div>
+      <div class="ac-row"><span class="ac-label">Total spent on introductions</span><span class="ac-value">€500</span></div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  <strong>MedTender Watch</strong> — Automated EU &amp; UK medical device tender monitoring &amp; distributor matching<br>
+  Data refreshed weekly from <a href="https://ted.europa.eu" target="_blank">TED (Tenders Electronic Daily)</a> and <a href="https://www.find-tender.service.gov.uk" target="_blank">UK Find a Tender Service</a><br><br>
+  <a href="index.html">All tenders</a> &nbsp;·&nbsp; <a href="manufacturer-demo.html">Manufacturer demo</a> &nbsp;·&nbsp; <a href="distributor-demo.html">Distributor demo</a>
+</footer>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  const tabs = ['tenders', 'distributors', 'account'];
+  document.querySelectorAll('.nav-tab')[tabs.indexOf(name)].classList.add('active');
+}
+
+// Sort pill interaction
+document.querySelectorAll('.sort-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.sort-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
