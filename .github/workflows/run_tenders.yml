@@ -27,6 +27,9 @@ jobs:
       - name: Run UK fetcher
         run: python scripts/uk_fetcher.py
 
+      - name: Run Scotland fetcher
+        run: python scripts/scotland_fetcher.py
+
       - name: Run parser on TED results
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

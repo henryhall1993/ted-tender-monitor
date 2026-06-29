@@ -14,16 +14,19 @@ def csv_to_list(filepath):
 def main():
     os.makedirs("results", exist_ok=True)
 
-    eu = csv_to_list("results/ted_medical_devices_parsed.csv")
-    uk = csv_to_list("results/uk_medical_devices_parsed.csv")
+    eu       = csv_to_list("results/ted_medical_devices_parsed.csv")
+    uk       = csv_to_list("results/uk_medical_devices_parsed.csv")
+    scotland = csv_to_list("results/scotland_medical_devices.csv")
 
     # Tag each record with its source
     for r in eu:
         r["source"] = "EU"
     for r in uk:
         r["source"] = "UK"
+    for r in scotland:
+        r["source"] = "Scotland"
 
-    combined = eu + uk
+    combined = eu + uk + scotland
 
     # Sort by quality score descending, then by deadline ascending
     def sort_key(r):
@@ -44,6 +47,6 @@ def main():
         json.dump(output, f, ensure_ascii=False, indent=2)
 
     print(f"Done — {len(combined)} tenders written to {output_path}")
-    print(f"  EU: {len(eu)} | UK: {len(uk)}")
+    print(f"  EU: {len(eu)} | UK: {len(uk)} | Scotland: {len(scotland)}")
 
 main()
