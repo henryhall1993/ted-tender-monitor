@@ -15,8 +15,8 @@ def main():
     os.makedirs("results", exist_ok=True)
 
     eu       = csv_to_list("results/ted_medical_devices_parsed.csv")
-    uk       = csv_to_list("results/uk_medical_devices_parsed.csv")
-    scotland = csv_to_list("results/scotland_medical_devices.csv")
+    uk       = csv_to_list("results/uk_medical_devices.csv")
+    scotland = csv_to_list("results/scotland_medical_devices_parsed.csv")
 
     # Tag each record with its source
     for r in eu:
