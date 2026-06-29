@@ -33,9 +33,9 @@ CPV_CODES = [
     "33730000", "33740000", "33750000", "33760000", "33770000",
     "33790000", "33900000", "33930000", "33940000", "33950000",
     "33960000", "33970000", "33980000", "33990000",
-    # Health services
-    "85000000", "85100000", "85110000", "85120000", "85130000",
-    "85140000", "85150000", "85160000",
+    # Health services (clinical only — excludes broad social care codes)
+    "85100000", "85110000", "85111000", "85111200", "85120000",
+    "85130000", "85140000", "85150000", "85160000",
 ]
 
 KEYWORDS = [
@@ -59,6 +59,11 @@ NOISE_KEYWORDS = [
 
 _NOISE_RE   = [re.compile(r"\b" + re.escape(nk) + r"\b") for nk in NOISE_KEYWORDS]
 _KEYWORD_RE = [re.compile(r"\b" + re.escape(kw) + r"\b") for kw in KEYWORDS]
+
+# Set of accepted CPV codes for fast membership testing in is_relevant.
+# A notice passes if ANY of its space-separated CPV codes is in this set
+# or starts with "33" (medical equipment — too many sub-codes to enumerate).
+_ACCEPTED_CPV_SET = set(CPV_CODES)
 
 CSV_COLUMNS = [
     "title", "deadline", "country", "estimated_value_eur",
@@ -173,17 +178,17 @@ def extract_notice(item):
 # ---------------------------------------------------------------------------
 
 def is_relevant(record):
-    """Keep if CPV starts with 33/85, OR title contains a medical keyword."""
+    """Keep if an accepted CPV code is present, OR title contains a medical keyword."""
     title_lower = record["title"].lower()
 
     # Noise in title → always drop
     if any(p.search(title_lower) for p in _NOISE_RE):
         return False
 
-    # CPV code starts with 33 (medical equipment) or 85 (health services)
-    cpv = record.get("cpv_codes") or ""
-    if cpv[:2] in ("33", "85"):
-        return True
+    # Check each CPV code on the notice (space-separated field)
+    for code in (record.get("cpv_codes") or "").split():
+        if code.startswith("33") or code in _ACCEPTED_CPV_SET:
+            return True
 
     # Medical keyword in title (word-boundary matched)
     if any(p.search(title_lower) for p in _KEYWORD_RE):
@@ -241,26 +246,31 @@ def main():
     # --- Relevance filter — track each stage separately ---
     total_before = len(records)
 
-    noise_dropped   = [r for r in records if any(
+    noise_dropped = [r for r in records if any(
         p.search(r["title"].lower()) for p in _NOISE_RE)]
-    after_noise     = [r for r in records if not any(
+    after_noise   = [r for r in records if not any(
         p.search(r["title"].lower()) for p in _NOISE_RE)]
 
-    cpv_kept        = [r for r in after_noise if (r.get("cpv_codes") or "")[:2] in ("33", "85")]
-    keyword_kept    = [r for r in after_noise
-                       if (r.get("cpv_codes") or "")[:2] not in ("33", "85")
-                       and any(p.search(r["title"].lower()) for p in _KEYWORD_RE)]
-    relevance_dropped = [r for r in after_noise
-                         if (r.get("cpv_codes") or "")[:2] not in ("33", "85")
+    # Among non-noise records, categorise what kept them
+    def _cpv_match(r):
+        return any(
+            c.startswith("33") or c in _ACCEPTED_CPV_SET
+            for c in (r.get("cpv_codes") or "").split()
+        )
+
+    cpv_kept          = [r for r in after_noise if _cpv_match(r)]
+    keyword_kept      = [r for r in after_noise if not _cpv_match(r)
+                         and any(p.search(r["title"].lower()) for p in _KEYWORD_RE)]
+    relevance_dropped = [r for r in after_noise if not _cpv_match(r)
                          and not any(p.search(r["title"].lower()) for p in _KEYWORD_RE)]
 
-    records = cpv_kept + keyword_kept
+    records = cpv_kept + keyword_kept  # same logic as is_relevant, post noise-drop
 
     print(f"\n--- Filter summary ---")
     print(f"Total unique (before filter)        : {total_before}")
     print(f"Dropped — noise keyword in title    : {len(noise_dropped)}")
-    print(f"Dropped — no CPV 33/85 & no keyword : {len(relevance_dropped)}")
-    print(f"Kept — CPV 33/85                    : {len(cpv_kept)}")
+    print(f"Dropped — no accepted CPV & no kw   : {len(relevance_dropped)}")
+    print(f"Kept — accepted CPV code            : {len(cpv_kept)}")
     print(f"Kept — medical keyword in title     : {len(keyword_kept)}")
     print(f"Final count                         : {len(records)}")
 
