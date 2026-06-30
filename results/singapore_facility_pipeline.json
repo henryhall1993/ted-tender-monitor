@@ -1,0 +1,250 @@
+[
+  {
+    "name": "Alexandra Hospital Redevelopment",
+    "type": "Hospitals",
+    "location": "378 Alexandra Road, Singapore 159964",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Eastern General Hospital Campus",
+    "type": "Hospitals",
+    "location": "Next to Bedok North MRT, bounded by Bedok Reservoir Road and Bedok North Road",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "NUH Kent Ridge Redevelopment",
+    "type": "Hospitals",
+    "location": "5 Lower Kent Ridge (KR) Road",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "SGH Elective Care Centre & New National Dental Centre Singapore (NDCS)",
+    "type": "Hospitals",
+    "location": "Second Hospital Avenue",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "SGH Redevelopment",
+    "type": "Hospitals",
+    "location": "Address TBA",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Tengah General and Community Hospital",
+    "type": "Hospitals",
+    "location": "Along Tengah Garden Avenue",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Tan Tock Seng Hospital Medical Tower",
+    "type": "Hospitals",
+    "location": "Jalan Tan Tock Seng",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Bishan Polyclinic",
+    "type": "Polyclinics",
+    "location": "Address TBA",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Polyclinic at Tiong Bahru",
+    "type": "Polyclinics",
+    "location": "Address TBA",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Redeveloped Clementi Polyclinic",
+    "type": "Polyclinics",
+    "location": "2 Clementi Close, Singapore 129634",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Redeveloped Queenstown Polyclinic",
+    "type": "Polyclinics",
+    "location": "Along Tanglin Halt Road",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Redeveloped Toa Payoh Polyclinic",
+    "type": "Polyclinics",
+    "location": "Between Lorong 6 Toa Payoh and the PIE",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Taman Jurong Polyclinic",
+    "type": "Polyclinics",
+    "location": "20 Yung Kuang Road, Singapore 619657",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Yew Tee Polyclinic",
+    "type": "Polyclinics",
+    "location": "628 Yew Tee Close, Singapore 680628",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Bidadari Polyclinic and Orange Valley Nursing Home (Bidadari)",
+    "type": "Co-located Polyclinics and Nursing Homes",
+    "location": "51 Alkaff Crescent, Singapore 349994",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Kaki Bukit Polyclinic (SingHealth) and Lentor Health Nursing Home (Kaki Bukit)",
+    "type": "Co-located Polyclinics and Nursing Homes",
+    "location": "18 Jalan Damai, Singapore 418000",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Redeveloped Jurong Polyclinic and ECON Care Residence (Jurong East)",
+    "type": "Co-located Polyclinics and Nursing Homes",
+    "location": "200 Jurong East Avenue 1, Singapore 609789",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Kwong Wai Shiu Miltonia Residence",
+    "type": "Nursing Homes",
+    "location": "Miltonia Close",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Nursing Home at Buangkok Green",
+    "type": "Nursing Homes",
+    "location": "Buangkok Green",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Man Fut Tong Nursing Home @ Fernvale North",
+    "type": "Nursing Homes",
+    "location": "Fernvale North",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "United Medicare Residence (Ghim Moh)",
+    "type": "Nursing Homes",
+    "location": "Ghim Moh Link",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Orange Valley Nursing Home (Anchorvale)",
+    "type": "Nursing Homes",
+    "location": "1 Anchorvale Lane Close, Singapore 546389",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "SNM Nursing Home @ Chencharu",
+    "type": "Nursing Homes",
+    "location": "Lorong Chencharu",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "St Andrew’s Nursing Home (Bukit Purmei)",
+    "type": "Nursing Homes",
+    "location": "Bukit Purmei Avenue",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "St Luke's Eldercare Residence @ Jelapang",
+    "type": "Nursing Homes",
+    "location": "8 Jelapang Road, Singapore 679440",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "United Medicare Residence (Tampines East)",
+    "type": "Nursing Homes",
+    "location": "9 Tampines Street 42, Singapore 529433",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "United Medicare Residence (Dover Road)",
+    "type": "Nursing Homes",
+    "location": "5 Dover Lane, Singapore 139685",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Nursing Home at Alexandra Health Campus",
+    "type": "Nursing Homes",
+    "location": "Alexandra Health Campus",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Nursing Home at Hougang Ave 5/7",
+    "type": "Nursing Homes",
+    "location": "Hougang Ave 5/7",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Nursing Home at Woodlands Dr 64",
+    "type": "Nursing Homes",
+    "location": "Woodlands Dr 64",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  },
+  {
+    "name": "Nursing Home at Admiralty Lane",
+    "type": "Nursing Homes",
+    "location": "Admiralty Lane",
+    "completion_year": null,
+    "bed_count": null,
+    "notes": ""
+  }
+]
