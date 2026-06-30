@@ -14,9 +14,10 @@ def csv_to_list(filepath):
 def main():
     os.makedirs("results", exist_ok=True)
 
-    eu       = csv_to_list("results/ted_medical_devices_parsed.csv")
-    uk       = csv_to_list("results/uk_medical_devices.csv")
-    scotland = csv_to_list("results/scotland_medical_devices_parsed.csv")
+    eu        = csv_to_list("results/ted_medical_devices_parsed.csv")
+    uk        = csv_to_list("results/uk_medical_devices.csv")
+    scotland  = csv_to_list("results/scotland_medical_devices_parsed.csv")
+    singapore = csv_to_list("results/singapore_market_intelligence.csv")
 
     # Tag each record with its source
     for r in eu:
@@ -25,8 +26,15 @@ def main():
         r["source"] = "UK"
     for r in scotland:
         r["source"] = "Scotland"
+    for r in singapore:
+        # Singapore data is historical awarded-contract intelligence, not an open
+        # tender (see scripts/singapore_fetcher.py) — map onto the common fields
+        # so it still renders, with deadline left blank.
+        r["source"] = "Singapore"
+        r["deadline"] = ""
+        r["estimated_value_eur"] = r.get("awarded_value_eur", "")
 
-    combined = eu + uk + scotland
+    combined = eu + uk + scotland + singapore
 
     # Sort by quality score descending, then by deadline ascending
     def sort_key(r):
@@ -47,6 +55,6 @@ def main():
         json.dump(output, f, ensure_ascii=False, indent=2)
 
     print(f"Done — {len(combined)} tenders written to {output_path}")
-    print(f"  EU: {len(eu)} | UK: {len(uk)} | Scotland: {len(scotland)}")
+    print(f"  EU: {len(eu)} | UK: {len(uk)} | Scotland: {len(scotland)} | Singapore: {len(singapore)}")
 
 main()

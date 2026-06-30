@@ -1,6 +1,6 @@
 {
   "generated": "2026-06-29",
-  "total": 367,
+  "total": 369,
   "tenders": [
     {
       "quality_score": "3",
@@ -5765,6 +5765,36 @@
       "evaluation_criteria": "",
       "language_detected": "",
       "source": "EU"
+    },
+    {
+      "title": "Provision for the Supply, Delivery, Installation and Commissioning of One (1) unit of a five (5)-laser, spectral, cell sorter (flow cytometer) with imaging capability and integrated biocontainment",
+      "award_date": "2026-02-13",
+      "country": "SGP",
+      "awarded_value_eur": "425467.89",
+      "supplier_name": "ZUELLIG PHARMA PTE. LTD.",
+      "tender_url": "",
+      "notice_id": "NST000ETT25000119",
+      "cpv_codes": "",
+      "description": "Provision for the Supply, Delivery, Installation and Commissioning of One (1) unit of a five (5)-laser, spectral, cell sorter (flow cytometer) with imaging capability and integrated biocontainment",
+      "buyer_name": "Agency for Science, Technology and Research",
+      "source": "Singapore",
+      "deadline": "",
+      "estimated_value_eur": "425467.89"
+    },
+    {
+      "title": "SUPPLY AND MAINTENANCE OF FUNCTIONAL NEAR-INFRARED SPECTROSCOPY (fNIRS) NEUROIMAGING DEVICE (TENDER NO.  MHA00103000025885)",
+      "award_date": "2026-01-20",
+      "country": "SGP",
+      "awarded_value_eur": "",
+      "supplier_name": "Unknown",
+      "tender_url": "",
+      "notice_id": "MHA00003000025885",
+      "cpv_codes": "",
+      "description": "SUPPLY AND MAINTENANCE OF FUNCTIONAL NEAR-INFRARED SPECTROSCOPY (fNIRS) NEUROIMAGING DEVICE (TENDER NO.  MHA00103000025885)",
+      "buyer_name": "Ministry of Home Affairs - Ministry Headquarter 1",
+      "source": "Singapore",
+      "deadline": "",
+      "estimated_value_eur": ""
     }
   ]
 }

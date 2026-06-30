@@ -30,6 +30,9 @@ jobs:
       - name: Run Scotland fetcher
         run: python scripts/scotland_fetcher.py
 
+      - name: Run Singapore market intelligence fetcher
+        run: python scripts/singapore_market_intel_fetcher.py
+
       # Wales (Sell2Wales): OCDS API returns 500 SQL errors on all requests including
       # the vendor's own documented example URLs. Download portal requires browser
       # automation (ASP.NET WebForms with ViewState). Skipped until API is fixed.
