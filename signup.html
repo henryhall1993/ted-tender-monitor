@@ -547,7 +547,6 @@
 <script>
 const SUPABASE_URL = 'https://macdesntkaqphsuteqnk.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_3jQFcEH5hAOtQrqYSTznMQ_SYQ7uqZk';
-const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 
 let currentStep = 1;
 
@@ -638,32 +637,10 @@ async function runAIMatching() {
     await delay(600);
     setProcessingStep(2);
 
-    const aiResponse = await fetch(ANTHROPIC_URL, {
+    const aiResponse = await fetch('/api/match-products', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': '', // Handled server-side in production
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 500,
-        messages: [{
-          role: 'user',
-          content: `You are a medical device procurement expert. A manufacturer has described their products. Map this to EU CPV (Common Procurement Vocabulary) codes and search keywords.
-
-Product description: "${desc}"
-
-Respond with ONLY valid JSON in this exact format:
-{
-  "cpv_codes": ["33157000", "33172000"],
-  "keywords": ["medical gas", "suction", "oxygen", "vacuum"],
-  "category_summary": "Medical gas systems and suction equipment"
-}
-
-Include 3-8 CPV codes starting with 33 that best match the products. Include 5-12 specific keywords that would appear in relevant tender notices. CPV codes must be 8-digit numbers.`
-        }]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product_description: desc })
     });
 
     let cpvCodes = ['33100000'];
@@ -672,15 +649,9 @@ Include 3-8 CPV codes starting with 33 that best match the products. Include 5-1
 
     if (aiResponse.ok) {
       const aiData = await aiResponse.json();
-      const text = aiData.content?.[0]?.text || '';
-      try {
-        const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
-        cpvCodes = parsed.cpv_codes || cpvCodes;
-        keywords = parsed.keywords || keywords;
-        categorySummary = parsed.category_summary || categorySummary;
-      } catch(e) {
-        // Use defaults if parsing fails
-      }
+      cpvCodes = aiData.cpv_codes?.length ? aiData.cpv_codes : cpvCodes;
+      keywords = aiData.keywords?.length ? aiData.keywords : keywords;
+      categorySummary = aiData.category_summary || categorySummary;
     }
 
     // Step 3: Show keywords
