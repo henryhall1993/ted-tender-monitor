@@ -133,7 +133,9 @@
     padding: 3px 10px; border-radius: 20px;
   }
   .pill-country  { background: var(--blue-lt);  color: var(--blue); }
-  .pill-deadline { background: var(--amber-lt); color: var(--amber); }
+  .pill-expired  { background: var(--red-lt);   color: var(--red); }
+  .pill-soon     { background: var(--amber-lt); color: var(--amber); }
+  .pill-open     { background: var(--green-lt); color: var(--green); }
   .pill-value    { background: var(--green-lt); color: var(--green); }
   .tender-summary {
     font-size: 13px; color: var(--text-2); line-height: 1.6;
@@ -256,6 +258,22 @@ function formatDeadline(d) {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+// Expired (past) / Closing soon (≤30 days) / green date (>30 days) / nothing (no deadline)
+function deadlineBadge(d) {
+  if (!d || d === 'NOT FOUND') return '';
+  const date = new Date(d);
+  if (isNaN(date)) return '';
+  const days = Math.ceil((date - Date.now()) / 86400000);
+  if (days < 0) {
+    return `<span class="meta-pill pill-expired">Expired</span>`;
+  }
+  if (days <= 30) {
+    const label = days === 0 ? 'today' : `${days} day${days === 1 ? '' : 's'}`;
+    return `<span class="meta-pill pill-soon">Closing soon — ${label}</span>`;
+  }
+  return `<span class="meta-pill pill-open">Deadline: ${escapeHtml(formatDeadline(d))}</span>`;
+}
+
 function showError(detail) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('dashboard').style.display = 'none';
@@ -265,7 +283,6 @@ function showError(detail) {
 
 function renderTender(t) {
   const country = COUNTRY_NAMES[t.country] || t.country || '';
-  const deadline = formatDeadline(t.deadline);
   const value = formatValue(t.estimated_value_eur);
   const summary = (t.english_summary && t.english_summary !== 'NOT FOUND')
     ? t.english_summary
@@ -276,7 +293,7 @@ function renderTender(t) {
       <div class="tender-title">${escapeHtml(t.original_title)}</div>
       <div class="tender-meta">
         ${country ? `<span class="meta-pill pill-country">${escapeHtml(country)}</span>` : ''}
-        ${deadline ? `<span class="meta-pill pill-deadline">Deadline: ${escapeHtml(deadline)}</span>` : ''}
+        ${deadlineBadge(t.deadline)}
         ${value ? `<span class="meta-pill pill-value">${escapeHtml(value)}</span>` : ''}
       </div>
       ${summary ? `<div class="tender-summary">${escapeHtml(summary)}</div>` : ''}
@@ -323,13 +340,16 @@ async function init() {
     const tenders = tendersData.tenders || [];
 
     // 4. Match against keywords (title, summary, or requirements).
-    // A keyword matches if all of its words appear in the tender text —
-    // "suction regulators" also matches "regulators for suction".
-    const kwWords = keywords.map(k => k.toLowerCase().split(/\s+/).filter(Boolean));
+    // Loose matching: a tender matches if ANY single word from any keyword
+    // appears in the text — "laparoscopic surgical instruments" matches on
+    // "laparoscopic" OR "surgical" OR "instruments".
+    const kwWords = [...new Set(
+      keywords.flatMap(k => k.toLowerCase().split(/\s+/)).filter(Boolean)
+    )];
     const matched = tenders.filter(t => {
       const haystack = [t.original_title, t.english_summary, t.what_they_want]
         .filter(Boolean).join(' ').toLowerCase();
-      return kwWords.some(words => words.every(w => haystack.includes(w)));
+      return kwWords.some(w => haystack.includes(w));
     });
 
     // 5. Render results

@@ -445,28 +445,28 @@
       <div class="form-group">
         <label class="form-label">Primary product categories</label>
         <div class="category-grid">
-          <label class="category-item" onclick="toggleCategory(this)">
+          <label class="category-item">
             <input type="checkbox" value="medical-gas"> Medical gas & suction
           </label>
-          <label class="category-item" onclick="toggleCategory(this)">
+          <label class="category-item">
             <input type="checkbox" value="imaging"> Imaging equipment
           </label>
-          <label class="category-item" onclick="toggleCategory(this)">
+          <label class="category-item">
             <input type="checkbox" value="surgical"> Surgical instruments
           </label>
-          <label class="category-item" onclick="toggleCategory(this)">
+          <label class="category-item">
             <input type="checkbox" value="monitoring"> Patient monitoring
           </label>
-          <label class="category-item" onclick="toggleCategory(this)">
+          <label class="category-item">
             <input type="checkbox" value="wound-care"> Wound care
           </label>
-          <label class="category-item" onclick="toggleCategory(this)">
+          <label class="category-item">
             <input type="checkbox" value="orthopaedic"> Orthopaedic devices
           </label>
-          <label class="category-item" onclick="toggleCategory(this)">
+          <label class="category-item">
             <input type="checkbox" value="diagnostics"> Diagnostics & IVD
           </label>
-          <label class="category-item" onclick="toggleCategory(this)">
+          <label class="category-item">
             <input type="checkbox" value="consumables"> Medical consumables
           </label>
         </div>
@@ -602,9 +602,17 @@ function hideError(errId, inputId) {
   document.getElementById(inputId).classList.remove('error');
 }
 
-function toggleCategory(el) {
-  el.classList.toggle('selected');
-}
+// One deterministic toggle per click: preventDefault stops the native
+// label→checkbox forwarding (which would otherwise double-fire and cancel
+// the toggle), then we flip the checkbox and the visual state together.
+document.querySelectorAll('.category-item').forEach(item => {
+  const cb = item.querySelector('input[type="checkbox"]');
+  item.addEventListener('click', (e) => {
+    e.preventDefault();
+    cb.checked = !cb.checked;
+    item.classList.toggle('selected', cb.checked);
+  });
+});
 
 function updateCharCount() {
   const textarea = document.getElementById('product_description');
