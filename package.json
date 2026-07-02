@@ -1,0 +1,7 @@
+{
+  "name": "ted-tender-monitor",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0"
+  }
+}

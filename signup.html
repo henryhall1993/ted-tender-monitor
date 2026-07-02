@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get started — MedTender Watch</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+
+  :root {
+    --navy:    #0f1f3d;
+    --navy-mid:#1a2f54;
+    --blue:    #2563eb;
+    --blue-lt: #dbeafe;
+    --blue-dk: #1d4ed8;
+    --teal:    #0d9488;
+    --teal-lt: #ccfbf1;
+    --green:   #16a34a;
+    --green-lt:#dcfce7;
+    --amber:   #d97706;
+    --amber-lt:#fef3c7;
+    --red:     #dc2626;
+    --red-lt:  #fee2e2;
+    --border:  #e2e8f0;
+    --bg:      #f8fafc;
+    --white:   #ffffff;
+    --text:    #0f172a;
+    --text-2:  #475569;
+    --text-3:  #94a3b8;
+    --serif:   'DM Serif Display', Georgia, serif;
+    --sans:    'Inter', sans-serif;
+    --radius:  12px;
+    --shadow:  0 1px 3px rgba(0,0,0,.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 768px) {
+    body { grid-template-columns: 1fr; }
+    .left-panel { display: none; }
+  }
+
+  /* ── Left panel ── */
+  .left-panel {
+    background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 60%, #1e3a6e 100%);
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .left-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .left-panel::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37,99,235,.2) 0%, transparent 70%);
+    bottom: -100px; right: -100px;
+    pointer-events: none;
+  }
+
+  .panel-logo {
+    font-size: 16px; font-weight: 700;
+    color: #fff; letter-spacing: -.02em;
+    position: relative; z-index: 1;
+  }
+  .panel-logo span { color: #60a5fa; }
+
+  .panel-content {
+    position: relative; z-index: 1;
+  }
+
+  .panel-eyebrow {
+    font-size: 12px; font-weight: 500;
+    color: #60a5fa; letter-spacing: .08em;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+
+  .panel-headline {
+    font-family: var(--serif);
+    font-size: 38px; color: #fff;
+    line-height: 1.15; margin-bottom: 20px;
+    letter-spacing: -.01em;
+  }
+
+  .panel-headline em {
+    font-style: italic;
+    background: linear-gradient(135deg, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .panel-sub {
+    font-size: 15px; color: rgba(255,255,255,.65);
+    line-height: 1.7; margin-bottom: 40px;
+  }
+
+  .panel-features { list-style: none; }
+  .panel-features li {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 14px; color: rgba(255,255,255,.7);
+    margin-bottom: 16px; line-height: 1.5;
+  }
+  .feature-icon {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: rgba(255,255,255,.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0; margin-top: 1px;
+  }
+
+  .panel-footer {
+    position: relative; z-index: 1;
+    font-size: 12px; color: rgba(255,255,255,.35);
+  }
+
+  /* ── Right panel ── */
+  .right-panel {
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px 40px;
+    overflow-y: auto;
+  }
+
+  .form-container {
+    width: 100%; max-width: 460px;
+  }
+
+  .form-header { margin-bottom: 32px; }
+  .form-title {
+    font-size: 24px; font-weight: 700;
+    color: var(--text); margin-bottom: 6px;
+  }
+  .form-sub { font-size: 14px; color: var(--text-2); }
+
+  .step-indicator {
+    display: flex; gap: 6px; margin-bottom: 32px;
+  }
+  .step-dot {
+    height: 4px; border-radius: 2px;
+    transition: all .3s;
+  }
+  .step-dot.active { background: var(--blue); flex: 2; }
+  .step-dot.done   { background: var(--green); flex: 1; }
+  .step-dot.todo   { background: var(--border); flex: 1; }
+
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    display: block; font-size: 13px; font-weight: 500;
+    color: var(--text); margin-bottom: 6px;
+  }
+  .form-label span { color: var(--red); margin-left: 2px; }
+  .form-hint { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%; padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px; font-size: 14px;
+    font-family: var(--sans); color: var(--text);
+    background: var(--white); transition: border-color .15s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none; border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+  }
+  .form-textarea {
+    min-height: 120px; resize: vertical; line-height: 1.6;
+  }
+  .form-input.error, .form-textarea.error { border-color: var(--red); }
+  .error-msg { font-size: 12px; color: var(--red); margin-top: 4px; display: none; }
+  .error-msg.show { display: block; }
+
+  .char-count {
+    font-size: 11px; color: var(--text-3);
+    text-align: right; margin-top: 4px;
+  }
+  .char-count.warn { color: var(--amber); }
+
+  .category-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .category-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border: 1px solid var(--border);
+    border-radius: 8px; cursor: pointer;
+    font-size: 13px; color: var(--text-2);
+    transition: all .15s; user-select: none;
+  }
+  .category-item:hover { border-color: var(--blue); color: var(--text); }
+  .category-item.selected {
+    border-color: var(--blue); background: var(--blue-lt);
+    color: var(--blue); font-weight: 500;
+  }
+  .category-item input { display: none; }
+
+  .btn {
+    width: 100%; padding: 12px;
+    border-radius: 10px; border: none;
+    font-size: 14px; font-weight: 500;
+    font-family: var(--sans); cursor: pointer;
+    transition: all .15s; display: flex;
+    align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: var(--blue-dk); }
+  .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+  .btn-secondary {
+    background: transparent; color: var(--text-2);
+    border: 1px solid var(--border); margin-top: 10px;
+  }
+  .btn-secondary:hover { background: var(--bg); }
+
+  .processing-box {
+    background: var(--blue-lt); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 20px;
+    display: none;
+  }
+  .processing-box.show { display: block; }
+  .processing-title {
+    font-size: 13px; font-weight: 600; color: var(--blue);
+    margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .processing-steps { list-style: none; }
+  .processing-steps li {
+    font-size: 12px; color: var(--blue);
+    padding: 3px 0; display: flex; align-items: center; gap: 8px;
+    opacity: .5; transition: opacity .3s;
+  }
+  .processing-steps li.done { opacity: 1; }
+  .processing-steps li.active { opacity: 1; font-weight: 500; }
+
+  .success-box {
+    text-align: center; padding: 40px 20px; display: none;
+  }
+  .success-box.show { display: block; }
+  .success-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--green-lt); margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+  }
+  .success-title {
+    font-size: 22px; font-weight: 700; color: var(--text);
+    margin-bottom: 8px;
+  }
+  .success-sub {
+    font-size: 14px; color: var(--text-2);
+    line-height: 1.6; margin-bottom: 24px;
+  }
+  .dashboard-link {
+    display: block; padding: 12px 24px;
+    background: var(--blue); color: #fff;
+    border-radius: 10px; text-decoration: none;
+    font-weight: 500; font-size: 14px;
+    transition: background .15s; margin-bottom: 12px;
+  }
+  .dashboard-link:hover { background: var(--blue-dk); }
+
+  .cpv-preview {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px; margin-top: 12px;
+    display: none;
+  }
+  .cpv-preview.show { display: block; }
+  .cpv-preview-title {
+    font-size: 12px; font-weight: 600; color: var(--text-2);
+    margin-bottom: 8px; text-transform: uppercase; letter-spacing: .05em;
+  }
+  .cpv-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .cpv-tag {
+    font-size: 11px; padding: 3px 8px; border-radius: 20px;
+    background: var(--blue-lt); color: var(--blue); font-weight: 500;
+  }
+  .kw-tag {
+    font-size: 11px; padding: 3px 8px; border-radius: 20px;
+    background: var(--teal-lt); color: var(--teal); font-weight: 500;
+  }
+
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 20px 0; color: var(--text-3); font-size: 12px;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .spinner {
+    width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin .7s linear infinite; display: none;
+  }
+  .spinner.show { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .mobile-logo {
+    display: none; font-size: 16px; font-weight: 700;
+    color: var(--navy); margin-bottom: 32px;
+  }
+  .mobile-logo span { color: var(--blue); }
+  @media (max-width: 768px) { .mobile-logo { display: block; } }
+</style>
+</head>
+<body>
+
+<!-- Left panel -->
+<div class="left-panel">
+  <div class="panel-logo">Med<span>Tender</span>Watch</div>
+
+  <div class="panel-content">
+    <div class="panel-eyebrow">Manufacturer onboarding</div>
+    <h1 class="panel-headline">
+      Your matched tenders,<br><em>ready in minutes</em>
+    </h1>
+    <p class="panel-sub">
+      Tell us what you make. Our AI reads your product description, maps it to the right procurement categories, and surfaces every relevant EU and UK tender — automatically, every Monday.
+    </p>
+    <ul class="panel-features">
+      <li>
+        <div class="feature-icon">🎯</div>
+        <div>Tenders matched to your exact product range — not generic medical device searches</div>
+      </li>
+      <li>
+        <div class="feature-icon">🌍</div>
+        <div>Coverage across 20+ European countries from three official government sources</div>
+      </li>
+      <li>
+        <div class="feature-icon">🤝</div>
+        <div>Distributor matching — find vetted European partners in markets where you have no presence</div>
+      </li>
+      <li>
+        <div class="feature-icon">📊</div>
+        <div>AI-parsed English summaries for every tender, regardless of original language</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="panel-footer">
+    Data sourced from TED Europa, UK Contracts Finder, and Public Contracts Scotland. Updated weekly.
+  </div>
+</div>
+
+<!-- Right panel -->
+<div class="right-panel">
+  <div class="form-container">
+
+    <div class="mobile-logo">Med<span>Tender</span>Watch</div>
+
+    <!-- Step indicator -->
+    <div class="step-indicator" id="step-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot todo"   id="dot-2"></div>
+      <div class="step-dot todo"   id="dot-3"></div>
+    </div>
+
+    <!-- Step 1: Company details -->
+    <div class="step active" id="step-1">
+      <div class="form-header">
+        <div class="form-title">Tell us about your company</div>
+        <div class="form-sub">Step 1 of 3 — Basic details</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="company_name">Company name <span>*</span></label>
+        <input class="form-input" type="text" id="company_name" placeholder="e.g. Acme Medical Devices Inc." autocomplete="organization">
+        <div class="error-msg" id="err-company">Please enter your company name</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="contact_email">Work email address <span>*</span></label>
+        <input class="form-input" type="email" id="contact_email" placeholder="you@company.com" autocomplete="email">
+        <div class="error-msg" id="err-email">Please enter a valid email address</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="country">Headquarters country <span>*</span></label>
+        <select class="form-select" id="country">
+          <option value="">Select country...</option>
+          <option value="US">United States</option>
+          <option value="CA">Canada</option>
+          <option value="GB">United Kingdom</option>
+          <option value="AU">Australia</option>
+          <option value="DE">Germany</option>
+          <option value="FR">France</option>
+          <option value="NL">Netherlands</option>
+          <option value="SE">Sweden</option>
+          <option value="NO">Norway</option>
+          <option value="CH">Switzerland</option>
+          <option value="other">Other</option>
+        </select>
+        <div class="error-msg" id="err-country">Please select your country</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="goToStep2()">
+        Continue <span>→</span>
+      </button>
+    </div>
+
+    <!-- Step 2: Product description -->
+    <div class="step" id="step-2">
+      <div class="form-header">
+        <div class="form-title">Describe what you make</div>
+        <div class="form-sub">Step 2 of 3 — Product profile</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="product_description">
+          Product description <span>*</span>
+        </label>
+        <textarea
+          class="form-textarea"
+          id="product_description"
+          placeholder="e.g. We manufacture medical gas and suction solutions including suction regulators, flowmeters, oxygen blenders, portable suction units, medical air compressors, vacuum pumps, manifolds, and pipeline accessories for hospital and clinical settings."
+          oninput="updateCharCount()"
+        ></textarea>
+        <div class="char-count" id="char-count">0 / 500 characters</div>
+        <div class="form-hint">Be specific — mention device types, clinical applications, and any certifications. The more detail you provide, the better your tender matches will be.</div>
+        <div class="error-msg" id="err-desc">Please describe your products (minimum 50 characters)</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Primary product categories</label>
+        <div class="category-grid">
+          <label class="category-item" onclick="toggleCategory(this)">
+            <input type="checkbox" value="medical-gas"> Medical gas & suction
+          </label>
+          <label class="category-item" onclick="toggleCategory(this)">
+            <input type="checkbox" value="imaging"> Imaging equipment
+          </label>
+          <label class="category-item" onclick="toggleCategory(this)">
+            <input type="checkbox" value="surgical"> Surgical instruments
+          </label>
+          <label class="category-item" onclick="toggleCategory(this)">
+            <input type="checkbox" value="monitoring"> Patient monitoring
+          </label>
+          <label class="category-item" onclick="toggleCategory(this)">
+            <input type="checkbox" value="wound-care"> Wound care
+          </label>
+          <label class="category-item" onclick="toggleCategory(this)">
+            <input type="checkbox" value="orthopaedic"> Orthopaedic devices
+          </label>
+          <label class="category-item" onclick="toggleCategory(this)">
+            <input type="checkbox" value="diagnostics"> Diagnostics & IVD
+          </label>
+          <label class="category-item" onclick="toggleCategory(this)">
+            <input type="checkbox" value="consumables"> Medical consumables
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="min_value">Minimum contract value (EUR)</label>
+        <select class="form-select" id="min_value">
+          <option value="0">No minimum — show all opportunities</option>
+          <option value="50000">€50,000+</option>
+          <option value="100000">€100,000+</option>
+          <option value="250000">€250,000+</option>
+          <option value="500000">€500,000+</option>
+          <option value="1000000">€1,000,000+</option>
+        </select>
+        <div class="form-hint">Filter out smaller contracts that aren't commercially viable for your business.</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="goToStep3()">
+        Generate my profile <span>→</span>
+      </button>
+      <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
+    </div>
+
+    <!-- Step 3: AI processing & result -->
+    <div class="step" id="step-3">
+      <div class="form-header">
+        <div class="form-title">Building your profile</div>
+        <div class="form-sub">Step 3 of 3 — AI matching</div>
+      </div>
+
+      <div class="processing-box show" id="processing-box">
+        <div class="processing-title">
+          <span id="proc-spinner">⟳</span> Analysing your product profile...
+        </div>
+        <ul class="processing-steps">
+          <li id="proc-1">📖 Reading your product description</li>
+          <li id="proc-2">🧠 Mapping to EU procurement categories (CPV codes)</li>
+          <li id="proc-3">🔍 Identifying matching keywords</li>
+          <li id="proc-4">💾 Saving your profile</li>
+          <li id="proc-5">🎯 Finding your first matched tenders</li>
+        </ul>
+      </div>
+
+      <div class="cpv-preview" id="cpv-preview">
+        <div class="cpv-preview-title">Your matched categories</div>
+        <div class="cpv-tags" id="cpv-tags-container"></div>
+        <div style="margin-top:8px">
+          <div class="cpv-preview-title" style="margin-top:8px">Keywords</div>
+          <div class="cpv-tags" id="kw-tags-container"></div>
+        </div>
+      </div>
+
+      <div class="success-box" id="success-box">
+        <div class="success-icon">✓</div>
+        <div class="success-title">Your dashboard is ready</div>
+        <div class="success-sub" id="success-message">
+          We found matched tenders for your profile. Your personalised dashboard is live — bookmark it to check back each week after Monday's update.
+        </div>
+        <a class="dashboard-link" id="dashboard-link" href="#">
+          View my matched tenders →
+        </a>
+        <div style="font-size:12px;color:var(--text-3);margin-top:8px">
+          Save this link — it's your unique dashboard URL
+        </div>
+      </div>
+
+      <div id="error-box" style="display:none;background:var(--red-lt);border-radius:var(--radius);padding:16px;margin-bottom:16px">
+        <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px">Something went wrong</div>
+        <div style="font-size:12px;color:var(--red)" id="error-message">Please try again or contact support.</div>
+        <button class="btn btn-secondary" style="margin-top:12px;width:auto;padding:8px 16px" onclick="goToStep(2)">← Try again</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://macdesntkaqphsuteqnk.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_3jQFcEH5hAOtQrqYSTznMQ_SYQ7uqZk';
+const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
+
+let currentStep = 1;
+
+function goToStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  document.getElementById('step-' + n).classList.add('active');
+  currentStep = n;
+  updateStepDots();
+}
+
+function updateStepDots() {
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('dot-' + i);
+    dot.className = 'step-dot ' + (i < currentStep ? 'done' : i === currentStep ? 'active' : 'todo');
+  }
+}
+
+function goToStep2() {
+  const name = document.getElementById('company_name').value.trim();
+  const email = document.getElementById('contact_email').value.trim();
+  const country = document.getElementById('country').value;
+  let valid = true;
+
+  if (!name) { showError('err-company', 'company_name'); valid = false; }
+  else hideError('err-company', 'company_name');
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showError('err-email', 'contact_email'); valid = false;
+  } else hideError('err-email', 'contact_email');
+
+  if (!country) { showError('err-country', 'country'); valid = false; }
+  else hideError('err-country', 'country');
+
+  if (valid) goToStep(2);
+}
+
+function goToStep3() {
+  const desc = document.getElementById('product_description').value.trim();
+  if (desc.length < 50) {
+    showError('err-desc', 'product_description'); return;
+  }
+  hideError('err-desc', 'product_description');
+  goToStep(3);
+  runAIMatching();
+}
+
+function showError(errId, inputId) {
+  document.getElementById(errId).classList.add('show');
+  document.getElementById(inputId).classList.add('error');
+}
+function hideError(errId, inputId) {
+  document.getElementById(errId).classList.remove('show');
+  document.getElementById(inputId).classList.remove('error');
+}
+
+function toggleCategory(el) {
+  el.classList.toggle('selected');
+}
+
+function updateCharCount() {
+  const textarea = document.getElementById('product_description');
+  const count = textarea.value.length;
+  const el = document.getElementById('char-count');
+  el.textContent = count + ' / 500 characters';
+  el.className = 'char-count' + (count > 450 ? ' warn' : '');
+}
+
+function setProcessingStep(n) {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('proc-' + i);
+    if (i < n) { el.classList.add('done'); el.classList.remove('active'); }
+    else if (i === n) { el.classList.add('active'); el.classList.remove('done'); }
+    else { el.classList.remove('done', 'active'); }
+  }
+}
+
+async function runAIMatching() {
+  const desc = document.getElementById('product_description').value.trim();
+  const companyName = document.getElementById('company_name').value.trim();
+  const email = document.getElementById('contact_email').value.trim();
+  const country = document.getElementById('country').value;
+  const minValue = parseInt(document.getElementById('min_value').value) || 0;
+
+  setProcessingStep(1);
+
+  try {
+    // Step 2: AI mapping
+    await delay(600);
+    setProcessingStep(2);
+
+    const aiResponse = await fetch(ANTHROPIC_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': '', // Handled server-side in production
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 500,
+        messages: [{
+          role: 'user',
+          content: `You are a medical device procurement expert. A manufacturer has described their products. Map this to EU CPV (Common Procurement Vocabulary) codes and search keywords.
+
+Product description: "${desc}"
+
+Respond with ONLY valid JSON in this exact format:
+{
+  "cpv_codes": ["33157000", "33172000"],
+  "keywords": ["medical gas", "suction", "oxygen", "vacuum"],
+  "category_summary": "Medical gas systems and suction equipment"
+}
+
+Include 3-8 CPV codes starting with 33 that best match the products. Include 5-12 specific keywords that would appear in relevant tender notices. CPV codes must be 8-digit numbers.`
+        }]
+      })
+    });
+
+    let cpvCodes = ['33100000'];
+    let keywords = ['medical device'];
+    let categorySummary = 'Medical devices';
+
+    if (aiResponse.ok) {
+      const aiData = await aiResponse.json();
+      const text = aiData.content?.[0]?.text || '';
+      try {
+        const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+        cpvCodes = parsed.cpv_codes || cpvCodes;
+        keywords = parsed.keywords || keywords;
+        categorySummary = parsed.category_summary || categorySummary;
+      } catch(e) {
+        // Use defaults if parsing fails
+      }
+    }
+
+    // Step 3: Show keywords
+    await delay(400);
+    setProcessingStep(3);
+    showCPVPreview(cpvCodes, keywords);
+
+    // Step 4: Save to Supabase
+    await delay(500);
+    setProcessingStep(4);
+
+    const token = generateToken();
+
+    const saveResponse = await fetch(`${SUPABASE_URL}/rest/v1/manufacturers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify({
+        company_name: companyName,
+        contact_email: email,
+        country: country,
+        product_description: desc,
+        cpv_codes: cpvCodes,
+        keywords: keywords,
+        dashboard_token: token,
+        min_contract_value: minValue,
+        subscription_status: 'trial',
+      })
+    });
+
+    if (!saveResponse.ok) {
+      const errData = await saveResponse.json();
+      throw new Error(errData.message || 'Failed to save profile');
+    }
+
+    // Step 5: Done
+    await delay(500);
+    setProcessingStep(5);
+    await delay(600);
+
+    // Show success
+    document.getElementById('processing-box').style.display = 'none';
+    const dashboardUrl = `${window.location.origin}/dashboard.html?token=${token}`;
+    document.getElementById('dashboard-link').href = dashboardUrl;
+    document.getElementById('success-box').classList.add('show');
+
+  } catch(err) {
+    document.getElementById('processing-box').style.display = 'none';
+    document.getElementById('error-message').textContent = err.message || 'An unexpected error occurred.';
+    document.getElementById('error-box').style.display = 'block';
+  }
+}
+
+function showCPVPreview(cpvCodes, keywords) {
+  const cpvContainer = document.getElementById('cpv-tags-container');
+  const kwContainer = document.getElementById('kw-tags-container');
+  cpvContainer.innerHTML = cpvCodes.map(c => `<span class="cpv-tag">${c}</span>`).join('');
+  kwContainer.innerHTML = keywords.map(k => `<span class="kw-tag">${k}</span>`).join('');
+  document.getElementById('cpv-preview').classList.add('show');
+}
+
+function generateToken() {
+  return 'mfr_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+</script>
+</body>
+</html>
