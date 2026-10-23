@@ -194,6 +194,23 @@
   }
   .btn-view:hover { text-decoration: none; opacity: .9; }
 
+  /* ── Display toggles ── */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin: 0 0 18px;
+    font-size: 12.5px;
+    color: var(--text-2);
+  }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+  .toggle input { accent-color: var(--iso-vacuum); width: 14px; height: 14px; cursor: pointer; }
+  .toggle .count { font-family: var(--mono); color: var(--text-3); }
+  .tag-adj { background: rgba(74,127,214,.15); color: #8fb2ec; border-color: rgba(74,127,214,.3); }
+  .tag-expired { background: var(--panel-2); color: var(--text-3); border-color: var(--line); }
+  .tender.adjacent { border-left-color: var(--iso-n2o); }
+  .tender.expired { opacity: .6; border-left-color: var(--text-3); }
+
   /* ── Empty / error states ── */
   .empty-state, .error-state {
     border: 1px solid var(--line);
@@ -224,7 +241,7 @@
     <div class="breadcrumb"><a href="index.html">MedTender Watch</a> / Gas &amp; Vacuum Systems Monitor</div>
     <h1>Gas &amp; Vacuum Systems Monitor <span>— live EU &amp; UK tenders</span></h1>
     <div class="tool-sub">
-      A standing, always-on feed of public procurement notices for medical gas pipeline systems, outlets, suction &amp; vacuum equipment, and gas delivery devices — pulled directly from the same TED and UK Find a Tender data behind MedTender Watch. This is an operational tool, not a sales demo: every line below is a real, current tender.
+      A standing, always-on feed of public procurement notices for medical gas pipeline systems, outlets, suction &amp; vacuum equipment, and gas delivery devices — pulled directly from the same TED and UK Find a Tender data behind MedTender Watch. This is an operational tool, not a sales demo: every line below is a real notice from the live feed. Core matches show first; related equipment and expired notices are hidden until you switch them on.
     </div>
     <div class="legend" id="legend"></div>
   </div>
@@ -234,7 +251,7 @@
 
   <div class="metrics">
     <div class="metric">
-      <div class="metric-label">Live matches</div>
+      <div class="metric-label">Core matches</div>
       <div class="metric-value" id="m-matched">–</div>
       <div class="metric-note" id="m-matched-note">Loading…</div>
     </div>
@@ -260,6 +277,11 @@
     <span id="status-text">Connecting to live feed…</span>
   </div>
 
+  <div class="controls">
+    <label class="toggle"><input type="checkbox" id="t-adj"> Show adjacent equipment — ventilators, anaesthesia, resuscitation <span class="count">(<span id="c-adj">0</span>)</span></label>
+    <label class="toggle"><input type="checkbox" id="t-exp"> Show expired tenders <span class="count">(<span id="c-exp">0</span>)</span></label>
+  </div>
+
   <div id="tender-list">
     <div class="empty-state">Loading tenders…</div>
   </div>
@@ -277,22 +299,27 @@
 
 <script>
 // ── Category definitions, coloured per ISO 7396-1 pipeline colour coding ──
+// "Adjacent" categories are related equipment (ventilators, anaesthesia,
+// resuscitation) rather than core gas-system / suction / vacuum work. A notice
+// only counts as adjacent when the term appears in its TITLE, and adjacent
+// notices are hidden until the user switches them on.
 const CATEGORIES = [
-  { id: 'oxygen',  label: 'Oxygen',                  color: 'var(--iso-oxygen)',
-    keywords: ['oxygen', 'gas therapy', 'gas-therapy', 'oxygen therapy', 'oxygen concentrator',
-               'oxygen supply', 'oxygen administration', 'oxygen mask', 'oxygen tent', 'humidifier'] },
-  { id: 'air',     label: 'Medical air',             color: 'var(--iso-air-line)',
+  { id: 'oxygen', label: 'Oxygen', color: 'var(--iso-oxygen)', adjacent: false,
+    keywords: ['oxygen', 'gas therapy', 'gas-therapy'] },
+  { id: 'air', label: 'Medical air', color: 'var(--iso-air-line)', adjacent: false,
     keywords: ['medical air', 'compressed air'] },
-  { id: 'vacuum',  label: 'Vacuum & suction',        color: 'var(--iso-vacuum)',
+  { id: 'vacuum', label: 'Vacuum & suction', color: 'var(--iso-vacuum)', adjacent: false,
     keywords: ['vacuum', 'suction', 'aspirator'] },
-  { id: 'anaes',   label: 'Anaesthesia & resuscitation', color: 'var(--iso-n2o)',
-    keywords: ['anaesthesia', 'anesthesia', 'resuscitation', 'ventilat', 'respirat', 'nitrous oxide', 'hyperbaric'] },
-  { id: 'infra',   label: 'Pipelines, outlets & delivery', color: 'var(--iso-infra)',
+  { id: 'infra', label: 'Pipelines, outlets & delivery', color: 'var(--iso-infra)', adjacent: false,
     keywords: ['gas pipeline', 'pipeline system', 'gas outlet', 'gas terminal', 'terminal unit',
                'bed head', 'pendant', 'ceiling supply', 'manifold', 'zone valve', 'gas delivery',
                'gas supply', 'medical gas'] },
+  { id: 'anaes', label: 'Anaesthesia & ventilation', color: 'var(--iso-n2o)', adjacent: true,
+    keywords: ['ventilator', 'anaesthesia', 'anesthesia', 'resuscitat', 'nitrous oxide', 'hyperbaric',
+               'humidifier', 'breathing device', 'respiratory device', 'respiratory equipment'] },
 ];
-const ALL_KEYWORDS = CATEGORIES.flatMap(c => c.keywords);
+const CORE_KEYWORDS = CATEGORIES.filter(c => !c.adjacent).flatMap(c => c.keywords);
+const ADJ_KEYWORDS  = CATEGORIES.filter(c => c.adjacent).flatMap(c => c.keywords);
 
 const TENDERS_URL = 'https://raw.githubusercontent.com/henryhall1993/ted-tender-monitor/main/results/tenders.json';
 
@@ -304,8 +331,10 @@ const COUNTRY_NAMES = {
   PRT:'Portugal', ROU:'Romania', SVK:'Slovakia', SVN:'Slovenia', ESP:'Spain', SWE:'Sweden', NOR:'Norway', SGP:'Singapore',
 };
 
-let activeFilters = new Set(); // empty = show all categories
-let allMatched = [];
+let activeFilters = new Set();   // empty = all categories
+let showAdjacent = false;        // ventilators / anaesthesia / resuscitation
+let showExpired = false;         // deadline already passed
+let allMatched = [];             // [{ t, tier, status, score }]
 
 function escapeHtml(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -319,12 +348,49 @@ function formatDeadline(d) {
   const date = new Date(d);
   return isNaN(date) ? d : date.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
 }
-function haystackOf(t) {
-  return [t.original_title, t.english_summary, t.what_they_want].filter(Boolean).join(' ').toLowerCase();
+function titleOf(t) { return (t.original_title || '').toLowerCase(); }
+function bodyOf(t)  { return [t.english_summary, t.what_they_want].filter(Boolean).join(' ').toLowerCase(); }
+function haystackOf(t) { return titleOf(t) + ' ' + bodyOf(t); }
+
+// core = a core keyword anywhere in title or summary; adjacent = adjacent keyword in the title only
+function tierOf(t) {
+  const h = haystackOf(t);
+  if (CORE_KEYWORDS.some(k => h.includes(k))) return 'core';
+  const title = titleOf(t);
+  if (ADJ_KEYWORDS.some(k => title.includes(k))) return 'adjacent';
+  return null;
 }
 function categoriesFor(t) {
-  const h = haystackOf(t);
-  return CATEGORIES.filter(c => c.keywords.some(k => h.includes(k)));
+  const full = haystackOf(t), title = titleOf(t);
+  return CATEGORIES.filter(c => c.keywords.some(k => (c.adjacent ? title : full).includes(k)));
+}
+// title hit = 3 points, summary-only hit = 1 point
+function relevanceScore(t) {
+  const title = titleOf(t), body = bodyOf(t);
+  let s = 0;
+  CORE_KEYWORDS.forEach(k => { if (title.includes(k)) s += 3; else if (body.includes(k)) s += 1; });
+  return s;
+}
+function deadlineStatus(t) {
+  const d = daysUntil(t.deadline);
+  if (d === null) return 'unknown';
+  return d < 0 ? 'expired' : 'open';
+}
+
+function visibleItems() {
+  const order = { open: 0, unknown: 1, expired: 2 };
+  return allMatched
+    .filter(x =>
+      (x.tier === 'core' || showAdjacent) &&
+      (x.status !== 'expired' || showExpired) &&
+      (activeFilters.size === 0 || categoriesFor(x.t).some(c => activeFilters.has(c.id))))
+    .sort((a, b) => {
+      if (a.tier !== b.tier) return a.tier === 'core' ? -1 : 1;
+      if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+      if (b.score !== a.score) return b.score - a.score;
+      const da = daysUntil(a.t.deadline), db = daysUntil(b.t.deadline);
+      return (da ?? 1e9) - (db ?? 1e9);
+    });
 }
 
 function renderLegend() {
@@ -339,7 +405,14 @@ function renderLegend() {
       const cat = chip.dataset.cat;
       if (cat === '__clear__') { activeFilters.clear(); }
       else if (activeFilters.has(cat)) { activeFilters.delete(cat); }
-      else { activeFilters.add(cat); }
+      else {
+        activeFilters.add(cat);
+        // choosing the adjacent category only makes sense with adjacent notices visible
+        if (CATEGORIES.find(c => c.id === cat)?.adjacent) {
+          showAdjacent = true;
+          document.getElementById('t-adj').checked = true;
+        }
+      }
       renderLegendState();
       renderList();
     });
@@ -352,29 +425,33 @@ function renderLegendState() {
   });
 }
 
-function renderCard(t) {
+function renderCard(x) {
+  const { t, tier, status } = x;
   const cats = categoriesFor(t);
   const country = COUNTRY_NAMES[t.country] || t.country || '';
   const source = t.source === 'UK' ? 'UK' : (t.source === 'Scotland' ? 'Scotland' : 'EU');
   const days = daysUntil(t.deadline);
-  const urgent = days !== null && days >= 0 && days <= 30;
+  const urgent = status === 'open' && days <= 30;
   const value = parseFloat(t.estimated_value_eur);
   const valueStr = (!isNaN(value) && value > 0) ? `€${Math.round(value).toLocaleString('en-GB')}` : '';
   const summary = t.english_summary || t.what_they_want || 'Summary not yet enriched for this notice — view the source tender for full details.';
+  const cls = 'tender' + (urgent ? ' urgent' : '') + (tier === 'adjacent' ? ' adjacent' : '') + (status === 'expired' ? ' expired' : '');
 
   return `
-    <div class="tender${urgent ? ' urgent' : ''}">
+    <div class="${cls}">
       <div class="t-top">
         <div class="t-title">${escapeHtml(t.original_title)}</div>
         <div class="t-tags">
           ${urgent ? `<span class="tag tag-urgent">${days}d left</span>` : ''}
+          ${status === 'expired' ? `<span class="tag tag-expired">Expired</span>` : ''}
+          ${tier === 'adjacent' ? `<span class="tag tag-adj">Adjacent</span>` : ''}
           <span class="tag tag-source">${source}</span>
         </div>
       </div>
       <div class="t-meta">
         ${t.buyer_name ? `<span>${escapeHtml(t.buyer_name)}</span>` : ''}
         ${country ? `<span>${escapeHtml(country)}</span>` : ''}
-        ${t.deadline ? `<span class="mono">Deadline ${escapeHtml(formatDeadline(t.deadline))}</span>` : ''}
+        ${t.deadline ? `<span class="mono">Deadline ${escapeHtml(formatDeadline(t.deadline))}</span>` : `<span class="mono">Deadline not listed — check source notice</span>`}
         ${valueStr ? `<span class="mono">${valueStr}</span>` : ''}
       </div>
       ${cats.length ? `<div class="t-cats">${cats.map(c => `<span class="cat-chip"><span class="cat-swatch" style="background:${c.color}"></span>${c.label}</span>`).join('')}</div>` : ''}
@@ -385,28 +462,36 @@ function renderCard(t) {
     </div>`;
 }
 
+function updateToggleCounts() {
+  document.getElementById('c-adj').textContent =
+    allMatched.filter(x => x.tier === 'adjacent' && x.status !== 'expired').length;
+  document.getElementById('c-exp').textContent =
+    allMatched.filter(x => x.status === 'expired' && (x.tier === 'core' || showAdjacent)).length;
+}
+
 function renderList() {
   const container = document.getElementById('tender-list');
-  const visible = activeFilters.size === 0
-    ? allMatched
-    : allMatched.filter(t => categoriesFor(t).some(c => activeFilters.has(c.id)));
+  const visible = visibleItems();
+  updateToggleCounts();
 
   if (!visible.length) {
     container.innerHTML = `
       <div class="empty-state">
-        <strong>No tenders match the current filter.</strong><br><br>
+        <strong>No tenders to show with the current settings.</strong><br><br>
         ${allMatched.length
-          ? 'Try clearing a filter above — there are matches in other categories right now.'
-          : 'No live tenders in this category as of the last scheduled fetch. Coverage for medical gas, pipeline, and suction/vacuum categories is still ramping up as the underlying CPV targeting is refined — check back after the next scheduled run, or see <a href="index.html">all tenders</a> for the full unfiltered feed.'}
+          ? 'Try clearing a category filter, or switch on adjacent equipment or expired tenders above.'
+          : 'No tenders in the latest feed matched this category. See <a href="index.html">all tenders</a> for the full unfiltered feed.'}
       </div>`;
     return;
   }
-
   container.innerHTML = visible.map(renderCard).join('');
 }
 
 async function init() {
   renderLegend();
+  document.getElementById('t-adj').addEventListener('change', e => { showAdjacent = e.target.checked; renderList(); });
+  document.getElementById('t-exp').addEventListener('change', e => { showExpired = e.target.checked; renderList(); });
+
   const statusDot = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
 
@@ -416,26 +501,29 @@ async function init() {
     const data = await res.json();
     const tenders = data.tenders || [];
 
-    allMatched = tenders.filter(t => {
-      const h = haystackOf(t);
-      return ALL_KEYWORDS.some(k => h.includes(k));
-    });
+    allMatched = tenders
+      .map(t => ({ t, tier: tierOf(t) }))
+      .filter(x => x.tier)
+      .map(x => ({ ...x, status: deadlineStatus(x.t), score: relevanceScore(x.t) }));
+
+    // headline numbers describe core matches that are still open or have no deadline listed
+    const coreLive = allMatched.filter(x => x.tier === 'core' && x.status !== 'expired');
 
     statusDot.className = 'dot';
     statusText.textContent = `Live · ${tenders.length} tenders scanned` + (data.generated ? ` · feed generated ${data.generated}` : '');
 
-    document.getElementById('m-matched').textContent = allMatched.length;
-    document.getElementById('m-matched-note').textContent = allMatched.length ? 'Across EU + UK' : 'None yet — see note below';
+    document.getElementById('m-matched').textContent = coreLive.length;
+    document.getElementById('m-matched-note').textContent = coreLive.length ? 'Open or no deadline listed' : 'None in the latest feed';
 
-    const closing = allMatched.filter(t => { const d = daysUntil(t.deadline); return d !== null && d >= 0 && d <= 30; }).length;
-    document.getElementById('m-closing').textContent = closing;
+    document.getElementById('m-closing').textContent =
+      coreLive.filter(x => { const d = daysUntil(x.t.deadline); return d !== null && d <= 30; }).length;
 
-    const totalValue = allMatched.reduce((sum, t) => { const v = parseFloat(t.estimated_value_eur); return sum + (isNaN(v) ? 0 : v); }, 0);
+    const totalValue = coreLive.reduce((sum, x) => { const v = parseFloat(x.t.estimated_value_eur); return sum + (isNaN(v) ? 0 : v); }, 0);
     document.getElementById('m-value').textContent = totalValue > 0
       ? '€' + (totalValue >= 1e6 ? (totalValue/1e6).toFixed(1) + 'M' : Math.round(totalValue).toLocaleString('en-GB'))
       : '€0';
 
-    document.getElementById('m-countries').textContent = new Set(allMatched.map(t => t.country).filter(Boolean)).size;
+    document.getElementById('m-countries').textContent = new Set(coreLive.map(x => x.t.country).filter(Boolean)).size;
 
     renderList();
 
