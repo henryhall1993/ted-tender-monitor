@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gas &amp; Vacuum Systems Monitor — MedTender Watch</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    /* Base palette — dark graphite, evoking a plant-room control panel rather
+       than a SaaS marketing page. */
+    --bg:        #14181c;
+    --panel:     #1b2126;
+    --panel-2:   #212930;
+    --line:      #2c363e;
+    --text:      #e7edf1;
+    --text-2:    #9aabb5;
+    --text-3:    #647079;
+
+    /* ISO 7396-1 medical gas pipeline colour coding — used deliberately as
+       the category accent colours below, not as decoration. */
+    --iso-oxygen:      #ffffff;
+    --iso-oxygen-ink:  #14181c;
+    --iso-air:         #0a0a0a;
+    --iso-air-line:    #e7edf1;
+    --iso-vacuum:      #f2c200;
+    --iso-vacuum-ink:  #14181c;
+    --iso-n2o:         #4a7fd6;
+    --iso-infra:       #2fbfa0;
+
+    --amber: #f2c200;
+    --red:   #e2564c;
+    --green: #3fbf8f;
+
+    --sans: 'Manrope', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --radius: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  a { color: var(--iso-vacuum); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ── Header ── */
+  header.tool-header {
+    border-bottom: 1px solid var(--line);
+    padding: 22px 20px 18px;
+  }
+  .tool-header-inner { max-width: 920px; margin: 0 auto; }
+  .breadcrumb { font-size: 12px; color: var(--text-3); margin-bottom: 10px; }
+  .breadcrumb a { color: var(--text-3); }
+  .breadcrumb a:hover { color: var(--text-2); }
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  h1 span { color: var(--text-2); font-weight: 500; }
+  .tool-sub {
+    color: var(--text-2);
+    font-size: 13.5px;
+    margin-top: 6px;
+    max-width: 62ch;
+  }
+
+  /* ── Gas legend strip — the ISO colour coding, used as real filter controls ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .legend-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 11px 6px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    font-size: 12.5px;
+    color: var(--text-2);
+    cursor: pointer;
+    user-select: none;
+    transition: border-color .15s, color .15s;
+  }
+  .legend-chip:hover { border-color: var(--text-3); }
+  .legend-chip.active { border-color: var(--text-2); color: var(--text); background: var(--panel-2); }
+  .swatch { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── Metrics ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin: 22px 0;
+  }
+  @media (max-width: 640px) { .metrics { grid-template-columns: repeat(2,1fr); } }
+  .metric {
+    background: var(--panel);
+    padding: 14px 16px;
+  }
+  .metric-label { font-size: 11px; color: var(--text-3); text-transform: none; margin-bottom: 6px; }
+  .metric-value { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--text); }
+  .metric-note { font-size: 11.5px; color: var(--text-3); margin-top: 3px; }
+
+  /* ── Status line ── */
+  .status-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--text-3);
+    margin-bottom: 20px;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .dot.warn { background: var(--amber); }
+  .dot.err { background: var(--red); }
+
+  /* ── Tender list ── */
+  .tender {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--iso-infra);
+    border-radius: var(--radius);
+    background: var(--panel);
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .tender.urgent { border-left-color: var(--red); }
+  .t-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .t-title { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.4; }
+  .t-tags { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .tag-source { background: var(--panel-2); color: var(--text-2); border-color: var(--line); }
+  .tag-urgent { background: rgba(226,86,76,.15); color: #f2938c; border-color: rgba(226,86,76,.3); }
+  .t-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    font-size: 12.5px;
+    color: var(--text-2);
+    margin-bottom: 10px;
+  }
+  .t-meta span { display: inline-flex; align-items: center; gap: 5px; }
+  .t-meta .mono { font-family: var(--mono); color: var(--text-2); }
+  .t-cats { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .cat-chip {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; padding: 2px 8px 2px 6px; border-radius: 999px;
+    background: var(--panel-2); color: var(--text-2); border: 1px solid var(--line);
+  }
+  .cat-swatch { width: 7px; height: 7px; border-radius: 2px; }
+  .t-summary { font-size: 13px; color: var(--text-2); margin-bottom: 12px; }
+  .t-actions { display: flex; align-items: center; gap: 14px; }
+  .btn-view {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--bg);
+    background: var(--iso-vacuum);
+    padding: 7px 14px;
+    border-radius: 5px;
+    display: inline-block;
+  }
+  .btn-view:hover { text-decoration: none; opacity: .9; }
+
+  /* ── Empty / error states ── */
+  .empty-state, .error-state {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    text-align: left;
+    color: var(--text-2);
+    font-size: 13.5px;
+    background: var(--panel);
+  }
+  .empty-state strong, .error-state strong { color: var(--text); }
+
+  footer.tool-footer {
+    border-top: 1px solid var(--line);
+    margin-top: 32px;
+    padding-top: 18px;
+    font-size: 12px;
+    color: var(--text-3);
+  }
+  footer.tool-footer a { color: var(--text-3); }
+  footer.tool-footer a:hover { color: var(--text-2); }
+</style>
+</head>
+<body>
+
+<header class="tool-header">
+  <div class="tool-header-inner">
+    <div class="breadcrumb"><a href="index.html">MedTender Watch</a> / Gas &amp; Vacuum Systems Monitor</div>
+    <h1>Gas &amp; Vacuum Systems Monitor <span>— live EU &amp; UK tenders</span></h1>
+    <div class="tool-sub">
+      A standing, always-on feed of public procurement notices for medical gas pipeline systems, outlets, suction &amp; vacuum equipment, and gas delivery devices — pulled directly from the same TED and UK Find a Tender data behind MedTender Watch. This is an operational tool, not a sales demo: every line below is a real, current tender.
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Live matches</div>
+      <div class="metric-value" id="m-matched">–</div>
+      <div class="metric-note" id="m-matched-note">Loading…</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Closing ≤ 30 days</div>
+      <div class="metric-value" id="m-closing">–</div>
+      <div class="metric-note">Act soon</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Disclosed value</div>
+      <div class="metric-value" id="m-value">–</div>
+      <div class="metric-note">Where published</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Countries</div>
+      <div class="metric-value" id="m-countries">–</div>
+      <div class="metric-note">With a live match</div>
+    </div>
+  </div>
+
+  <div class="status-line">
+    <span class="dot" id="status-dot"></span>
+    <span id="status-text">Connecting to live feed…</span>
+  </div>
+
+  <div id="tender-list">
+    <div class="empty-state">Loading tenders…</div>
+  </div>
+
+</div>
+
+<footer class="tool-footer">
+  <div class="wrap" style="padding-bottom:0">
+    Data sourced from <a href="https://ted.europa.eu" target="_blank" rel="noopener">TED (Tenders Electronic Daily)</a> and
+    <a href="https://www.find-tender.service.gov.uk" target="_blank" rel="noopener">UK Find a Tender Service</a>, refreshed weekly.
+    Category chips reflect ISO 7396-1 medical gas pipeline colour coding, used here purely for visual grouping — not a certification claim.
+    &nbsp;·&nbsp; <a href="index.html">All tenders</a>
+  </div>
+</footer>
+
+<script>
+// ── Category definitions, coloured per ISO 7396-1 pipeline colour coding ──
+const CATEGORIES = [
+  { id: 'oxygen',  label: 'Oxygen',                  color: 'var(--iso-oxygen)',
+    keywords: ['oxygen', 'gas therapy', 'gas-therapy', 'oxygen therapy', 'oxygen concentrator',
+               'oxygen supply', 'oxygen administration', 'oxygen mask', 'oxygen tent', 'humidifier'] },
+  { id: 'air',     label: 'Medical air',             color: 'var(--iso-air-line)',
+    keywords: ['medical air', 'compressed air'] },
+  { id: 'vacuum',  label: 'Vacuum & suction',        color: 'var(--iso-vacuum)',
+    keywords: ['vacuum', 'suction', 'aspirator'] },
+  { id: 'anaes',   label: 'Anaesthesia & resuscitation', color: 'var(--iso-n2o)',
+    keywords: ['anaesthesia', 'anesthesia', 'resuscitation', 'ventilat', 'respirat', 'nitrous oxide', 'hyperbaric'] },
+  { id: 'infra',   label: 'Pipelines, outlets & delivery', color: 'var(--iso-infra)',
+    keywords: ['gas pipeline', 'pipeline system', 'gas outlet', 'gas terminal', 'terminal unit',
+               'bed head', 'pendant', 'ceiling supply', 'manifold', 'zone valve', 'gas delivery',
+               'gas supply', 'medical gas'] },
+];
+const ALL_KEYWORDS = CATEGORIES.flatMap(c => c.keywords);
+
+const TENDERS_URL = 'https://raw.githubusercontent.com/henryhall1993/ted-tender-monitor/main/results/tenders.json';
+
+const COUNTRY_NAMES = {
+  SCT:'Scotland', ENG:'England', WLS:'Wales', NIR:'Northern Ireland', GBR:'United Kingdom', UKM:'United Kingdom',
+  AUT:'Austria', BEL:'Belgium', BGR:'Bulgaria', HRV:'Croatia', CYP:'Cyprus', CZE:'Czechia', DNK:'Denmark',
+  EST:'Estonia', FIN:'Finland', FRA:'France', DEU:'Germany', GRC:'Greece', HUN:'Hungary', IRL:'Ireland',
+  ITA:'Italy', LVA:'Latvia', LTU:'Lithuania', LUX:'Luxembourg', MLT:'Malta', NLD:'Netherlands', POL:'Poland',
+  PRT:'Portugal', ROU:'Romania', SVK:'Slovakia', SVN:'Slovenia', ESP:'Spain', SWE:'Sweden', NOR:'Norway', SGP:'Singapore',
+};
+
+let activeFilters = new Set(); // empty = show all categories
+let allMatched = [];
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function daysUntil(d) {
+  if (!d || d === 'NOT FOUND') return null;
+  const date = new Date(d);
+  return isNaN(date) ? null : Math.ceil((date - Date.now()) / 86400000);
+}
+function formatDeadline(d) {
+  const date = new Date(d);
+  return isNaN(date) ? d : date.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+function haystackOf(t) {
+  return [t.original_title, t.english_summary, t.what_they_want].filter(Boolean).join(' ').toLowerCase();
+}
+function categoriesFor(t) {
+  const h = haystackOf(t);
+  return CATEGORIES.filter(c => c.keywords.some(k => h.includes(k)));
+}
+
+function renderLegend() {
+  const el = document.getElementById('legend');
+  el.innerHTML = CATEGORIES.map(c => `
+    <div class="legend-chip" data-cat="${c.id}">
+      <span class="swatch" style="background:${c.color}"></span>${c.label}
+    </div>`).join('') + `<div class="legend-chip" data-cat="__clear__">Clear filters</div>`;
+
+  el.querySelectorAll('.legend-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const cat = chip.dataset.cat;
+      if (cat === '__clear__') { activeFilters.clear(); }
+      else if (activeFilters.has(cat)) { activeFilters.delete(cat); }
+      else { activeFilters.add(cat); }
+      renderLegendState();
+      renderList();
+    });
+  });
+  renderLegendState();
+}
+function renderLegendState() {
+  document.querySelectorAll('.legend-chip').forEach(chip => {
+    chip.classList.toggle('active', activeFilters.has(chip.dataset.cat));
+  });
+}
+
+function renderCard(t) {
+  const cats = categoriesFor(t);
+  const country = COUNTRY_NAMES[t.country] || t.country || '';
+  const source = t.source === 'UK' ? 'UK' : (t.source === 'Scotland' ? 'Scotland' : 'EU');
+  const days = daysUntil(t.deadline);
+  const urgent = days !== null && days >= 0 && days <= 30;
+  const value = parseFloat(t.estimated_value_eur);
+  const valueStr = (!isNaN(value) && value > 0) ? `€${Math.round(value).toLocaleString('en-GB')}` : '';
+  const summary = t.english_summary || t.what_they_want || 'Summary not yet enriched for this notice — view the source tender for full details.';
+
+  return `
+    <div class="tender${urgent ? ' urgent' : ''}">
+      <div class="t-top">
+        <div class="t-title">${escapeHtml(t.original_title)}</div>
+        <div class="t-tags">
+          ${urgent ? `<span class="tag tag-urgent">${days}d left</span>` : ''}
+          <span class="tag tag-source">${source}</span>
+        </div>
+      </div>
+      <div class="t-meta">
+        ${t.buyer_name ? `<span>${escapeHtml(t.buyer_name)}</span>` : ''}
+        ${country ? `<span>${escapeHtml(country)}</span>` : ''}
+        ${t.deadline ? `<span class="mono">Deadline ${escapeHtml(formatDeadline(t.deadline))}</span>` : ''}
+        ${valueStr ? `<span class="mono">${valueStr}</span>` : ''}
+      </div>
+      ${cats.length ? `<div class="t-cats">${cats.map(c => `<span class="cat-chip"><span class="cat-swatch" style="background:${c.color}"></span>${c.label}</span>`).join('')}</div>` : ''}
+      <div class="t-summary">${escapeHtml(summary)}</div>
+      <div class="t-actions">
+        ${t.tender_url ? `<a class="btn-view" href="${escapeHtml(t.tender_url)}" target="_blank" rel="noopener">View source notice ↗</a>` : ''}
+      </div>
+    </div>`;
+}
+
+function renderList() {
+  const container = document.getElementById('tender-list');
+  const visible = activeFilters.size === 0
+    ? allMatched
+    : allMatched.filter(t => categoriesFor(t).some(c => activeFilters.has(c.id)));
+
+  if (!visible.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <strong>No tenders match the current filter.</strong><br><br>
+        ${allMatched.length
+          ? 'Try clearing a filter above — there are matches in other categories right now.'
+          : 'No live tenders in this category as of the last scheduled fetch. Coverage for medical gas, pipeline, and suction/vacuum categories is still ramping up as the underlying CPV targeting is refined — check back after the next scheduled run, or see <a href="index.html">all tenders</a> for the full unfiltered feed.'}
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = visible.map(renderCard).join('');
+}
+
+async function init() {
+  renderLegend();
+  const statusDot = document.getElementById('status-dot');
+  const statusText = document.getElementById('status-text');
+
+  try {
+    const res = await fetch(TENDERS_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Feed returned HTTP ' + res.status);
+    const data = await res.json();
+    const tenders = data.tenders || [];
+
+    allMatched = tenders.filter(t => {
+      const h = haystackOf(t);
+      return ALL_KEYWORDS.some(k => h.includes(k));
+    });
+
+    statusDot.className = 'dot';
+    statusText.textContent = `Live · ${tenders.length} tenders scanned` + (data.generated ? ` · feed generated ${data.generated}` : '');
+
+    document.getElementById('m-matched').textContent = allMatched.length;
+    document.getElementById('m-matched-note').textContent = allMatched.length ? 'Across EU + UK' : 'None yet — see note below';
+
+    const closing = allMatched.filter(t => { const d = daysUntil(t.deadline); return d !== null && d >= 0 && d <= 30; }).length;
+    document.getElementById('m-closing').textContent = closing;
+
+    const totalValue = allMatched.reduce((sum, t) => { const v = parseFloat(t.estimated_value_eur); return sum + (isNaN(v) ? 0 : v); }, 0);
+    document.getElementById('m-value').textContent = totalValue > 0
+      ? '€' + (totalValue >= 1e6 ? (totalValue/1e6).toFixed(1) + 'M' : Math.round(totalValue).toLocaleString('en-GB'))
+      : '€0';
+
+    document.getElementById('m-countries').textContent = new Set(allMatched.map(t => t.country).filter(Boolean)).size;
+
+    renderList();
+
+  } catch (err) {
+    statusDot.className = 'dot err';
+    statusText.textContent = 'Could not load the live feed';
+    document.getElementById('tender-list').innerHTML = `
+      <div class="error-state"><strong>Couldn't load live tender data.</strong><br><br>${escapeHtml(err.message || 'Unknown error')} — try refreshing the page.</div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
