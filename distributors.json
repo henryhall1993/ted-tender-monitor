@@ -1,0 +1,110 @@
+{
+  "updated": "2026-10-23",
+  "note": "Compiled from public web sources on the date shown. Entries are NOT vetted and are NOT MedTender Watch members. Most are local manufacturer-installers, so depending on a US manufacturer's product they may be partners, resellers or competitors. Verify independently before any outreach.",
+  "distributors": [
+    {
+      "id": "pl-agmed",
+      "name": "Agmed – Gazy Medyczne sp. z o.o.",
+      "countries": ["POL"],
+      "type": "Local manufacturer & installer",
+      "categories": ["infra", "oxygen"],
+      "city": "Nowe Gulczewo",
+      "website": "http://agmedgazymedyczne.pl",
+      "summary": "Designs and produces medical gas pipeline systems, including oxygen generators, medical columns and bedside panels, plus warranty repairs and design consulting for healthcare facilities.",
+      "source_label": "Company registry listing",
+      "source_url": "https://compabase.com/companies/krs/0000510915",
+      "checked": "2026-10-23"
+    },
+    {
+      "id": "pl-inmed",
+      "name": "INMED S.A.",
+      "countries": ["POL"],
+      "type": "Local manufacturer & distributor",
+      "categories": ["infra"],
+      "city": "",
+      "website": "",
+      "summary": "Polish supplier and manufacturer active since 1996. Core business is medical gas pipeline systems, including surgical and anaesthetic columns, bedside panels and medical flow meters, for patient rooms, intensive care and operating theatres.",
+      "source_label": "DevelopmentAid organisation profile",
+      "source_url": "https://www.developmentaid.org/organizations/view/513851/inmed-spolka-akcyjna",
+      "checked": "2026-10-23"
+    },
+    {
+      "id": "ro-tehnoplus",
+      "name": "Tehnoplus Service S.R.L.",
+      "countries": ["ROU"],
+      "type": "Installer & supplier",
+      "categories": ["infra", "vacuum", "air", "oxygen"],
+      "city": "Bucharest",
+      "website": "http://www.tehnoplus.ro",
+      "summary": "Sells and installs cylinder stations, medical air and vacuum stations, pipeline systems and wall or ceiling supply units, as part of turnkey hospital modernisation work.",
+      "source_label": "Company catalogue (Romedic)",
+      "source_url": "https://www.romedic.ro/upload/12807.pdf",
+      "checked": "2026-10-23"
+    },
+    {
+      "id": "ro-linde",
+      "name": "Linde Gaz România",
+      "countries": ["ROU"],
+      "type": "Gas supplier & installer",
+      "categories": ["oxygen"],
+      "city": "",
+      "website": "",
+      "summary": "Industrial and medical gas supplier. A 2020 report describes it installing hospital oxygen tanks and distribution systems with its own design and installation crews, so it is more likely a gatekeeper or competitor than a reseller.",
+      "source_label": "Financial Intelligence article (May 2020)",
+      "source_url": "https://financialintelligence.ro/linde-gaz-romania-mai-multe-spitale-din-tara-trec-acum-printr-un-proces-accelerat-de-modernizare-a-instalatiilor-de-furnizare-a-oxigenului-medicinal/",
+      "checked": "2026-10-23"
+    },
+    {
+      "id": "gr-samaras",
+      "name": "G. Samaras S.A.",
+      "countries": ["GRC"],
+      "type": "Local manufacturer & installer",
+      "categories": ["infra"],
+      "city": "Thessaloniki",
+      "website": "http://www.gsamaras.gr",
+      "summary": "Medical gas systems company active since 1968. Covers design and calculations, installation, commissioning and certification, maintenance and training. Branches in Athens and Stuttgart.",
+      "source_label": "MedicalExpo company profile",
+      "source_url": "https://www.medicalexpo.com/soc/g-samaras-sa-medical-gas-solutions-100977.html",
+      "checked": "2026-10-23"
+    },
+    {
+      "id": "it-itemoxygen",
+      "name": "Item Oxygen S.r.l.",
+      "countries": ["ITA"],
+      "type": "Installer & supplier",
+      "categories": ["infra", "vacuum"],
+      "city": "Altamura (BA)",
+      "website": "",
+      "summary": "Turnkey provider of technical and medical gas plants: design, installation and maintenance of pipeline distribution, vacuum and anaesthetic gas scavenging systems, and supply units.",
+      "source_label": "HealthManagement.org company profile",
+      "source_url": "https://healthmanagement.org/site/p/item-oxygen-s-r-l",
+      "checked": "2026-10-23"
+    },
+    {
+      "id": "it-operamed",
+      "name": "Operamed (DS Medica Tecnologie / MD)",
+      "countries": ["ITA"],
+      "type": "Local manufacturer & installer",
+      "categories": ["infra"],
+      "city": "Noale / Scorzè (VE)",
+      "website": "",
+      "summary": "Italian specialist in medical gas distribution systems: engineering, design, production, installation and maintenance. Mainly active in North-East Italy. One entity installs, the other makes pipeline components.",
+      "source_label": "Equita Capital investment profile",
+      "source_url": "https://sgr.equita.eu/en/private-debt/operamed.html",
+      "checked": "2026-10-23"
+    },
+    {
+      "id": "cz-mzliberec",
+      "name": "MZ Liberec a.s.",
+      "countries": ["CZE"],
+      "type": "Local manufacturer & installer",
+      "categories": ["infra", "oxygen", "air", "vacuum"],
+      "city": "Liberec",
+      "website": "http://www.mzliberec.cz",
+      "summary": "Designs, manufactures, supplies and installs medical and technical gas systems, including ceiling pendants, oxygen generators, compressors and vacuum stations for operating rooms, ICUs and wards.",
+      "source_label": "AOBP member profile",
+      "source_url": "https://aobp.cz/profil/?id=147",
+      "checked": "2026-10-23"
+    }
+  ]
+}
