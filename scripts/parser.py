@@ -53,7 +53,7 @@ DESCRIPTION:
 def parse_with_claude(title, buyer, country, description):
     try:
         message = client.messages.create(
-            model="claude-sonnet-4-5",
+            model="claude-sonnet-5-5",
             max_tokens=1000,
             messages=[
                 {
@@ -69,6 +69,7 @@ def parse_with_claude(title, buyer, country, description):
         )
         return message.content[0].text
     except Exception as e:
+        print(f"  ✗ CLAUDE API ERROR: {e}")
         return f"PARSE_ERROR: {e}"
 
 def extract_field(response_text, field_name):

@@ -10,6 +10,29 @@ PAGE_SIZE = 100
 SLEEP_BETWEEN_PAGES = 1
 OUTPUT_CSV = "results/ted_medical_devices.csv"
 
+# Specific CPV codes for medical gas systems, pipelines/outlets, suction &
+# vacuum, and gas delivery. These are queried as their OWN pass (see
+# GAS_SUCTION_PAGES below) because the broad "33100000 - Medical equipments"
+# query below is dominated by high-volume categories (implants, consumables,
+# diagnostics, etc.) — with only 3 pages / 300 records pulled per run, niche
+# gas/suction notices were getting crowded out and effectively never surfaced.
+GAS_SUCTION_CPV_CODES = [
+    "33157000",  # Gas-therapy and respiratory devices (parent)
+    "33157100",  # Oxygen breathing apparatus
+    "33157110",  # Oxygen masks
+    "33157200",  # Ventilation equipment / respiratory assistance
+    "33157300",  # Oxygen tents
+    "33157400",  # Medical breathing devices / ventilators
+    "33157500",  # Hyperbaric chambers
+    "33157700",  # Humidifiers for oxygen therapy
+    "33157800",  # Oxygen administration unit
+    "33157810",  # Oxygen therapy unit / installation
+    "33172000",  # Anaesthesia and resuscitation devices (parent)
+    "33172100",  # Anaesthesia devices
+    "33172200",  # Resuscitation devices
+]
+GAS_SUCTION_PAGES = 5  # up to 500 targeted records per run
+
 REQUESTED_FIELDS = [
     "ND", "TI", "DT", "CY", "TVH", "TVL", "PC", "DD",
     "description-lot", "description-part", "description-proc",
@@ -30,12 +53,11 @@ TED_NOTICE_URL = "https://ted.europa.eu/en/notice/-/detail/{notice_id}"
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)-8s %(message)s", datefmt="%H:%M:%S")
 log = logging.getLogger(__name__)
 
-def build_query(page):
+def build_query(page, cpv_clause="classification-cpv=33100000"):
     six_months_ago = (date.today() - timedelta(days=180)).strftime("%Y%m%d")
     today = date.today().strftime("%Y%m%d")
-    print(f"Date range: {six_months_ago} to {today}")
     return {
-        "query": f"classification-cpv=33100000 AND publication-date>={six_months_ago} AND publication-date<={today}",
+        "query": f"{cpv_clause} AND publication-date>={six_months_ago} AND publication-date<={today}",
         "fields": REQUESTED_FIELDS,
         "page": page,
         "limit": PAGE_SIZE,
@@ -43,8 +65,8 @@ def build_query(page):
         "paginationMode": "PAGE_NUMBER",
     }
 
-def fetch_page(session, page):
-    payload = build_query(page)
+def fetch_page(session, page, cpv_clause="classification-cpv=33100000"):
+    payload = build_query(page, cpv_clause)
     log.info("Fetching page %d ...", page)
     response = session.post(
         BASE_URL,
@@ -147,38 +169,65 @@ def extract_notice(notice):
         "buyer_name": buyer_name,
     }
 
-def main():
-    import os
-    os.makedirs("results", exist_ok=True)
-
-    pages = 3
-    session = requests.Session()
-    session.headers.update({"User-Agent": "ted-cpv-fetcher/1.0"})
-    all_records = []
-
+def run_pass(session, cpv_clause, pages, label):
+    """Fetch up to `pages` pages for a given CPV query clause."""
+    records = []
     for page in range(1, pages + 1):
         try:
-            data = fetch_page(session, page)
+            data = fetch_page(session, page, cpv_clause)
         except requests.HTTPError as exc:
-            log.error("HTTP error on page %d: %s", page, exc)
+            log.error("[%s] HTTP error on page %d: %s", label, page, exc)
             break
         except requests.RequestException as exc:
-            log.error("Network error on page %d: %s", page, exc)
+            log.error("[%s] Network error on page %d: %s", label, page, exc)
             break
 
         notices = data.get("notices", [])
         if not notices:
-            log.info("No more results on page %d - stopping.", page)
+            log.info("[%s] No more results on page %d - stopping.", label, page)
             break
 
         total = data.get("total", "unknown")
-        log.info("Total available: %s | Retrieved so far: %d", total, len(all_records) + len(notices))
+        log.info("[%s] Total available: %s | Retrieved so far: %d", label, total, len(records) + len(notices))
 
         for notice in notices:
-            all_records.append(extract_notice(notice))
+            records.append(extract_notice(notice))
 
         if page < pages:
             time.sleep(SLEEP_BETWEEN_PAGES)
+    return records
+
+def main():
+    import os
+    os.makedirs("results", exist_ok=True)
+
+    session = requests.Session()
+    session.headers.update({"User-Agent": "ted-cpv-fetcher/1.0"})
+
+    # Pass 1: broad general-medical sweep (unchanged behaviour)
+    log.info("=== Pass 1: broad medical equipment (CPV 33100000), 3 pages ===")
+    broad_records = run_pass(session, "classification-cpv=33100000", 3, "broad")
+
+    # Pass 2: targeted gas-therapy / suction / anaesthesia sweep so these
+    # niche categories get dedicated page budget instead of being crowded
+    # out by higher-volume general medical device notices in Pass 1.
+    # NOTE: using repeated "classification-cpv=X OR ..." rather than an IN(...)
+    # clause — this OR/AND/= syntax is the form confirmed in TED's own expert
+    # query examples; IN(...) support for this field was not confirmed, and a
+    # malformed clause would silently return zero rather than erroring loudly.
+    gas_cpv_clause = "(" + " OR ".join(f"classification-cpv={c}" for c in GAS_SUCTION_CPV_CODES) + ")"
+    log.info("=== Pass 2: gas/suction/vacuum/anaesthesia CPV codes, %d pages ===", GAS_SUCTION_PAGES)
+    gas_records = run_pass(session, gas_cpv_clause, GAS_SUCTION_PAGES, "gas-suction")
+
+    # Merge + de-duplicate by notice_id (a record can appear in both passes)
+    combined = {}
+    for r in broad_records + gas_records:
+        if r["notice_id"]:
+            combined[r["notice_id"]] = r
+    all_records = list(combined.values())
+
+    log.info("Broad pass: %d | Gas/suction pass: %d | Combined unique: %d",
+              len(broad_records), len(gas_records), len(all_records))
 
     if not all_records:
         log.warning("No records retrieved.")

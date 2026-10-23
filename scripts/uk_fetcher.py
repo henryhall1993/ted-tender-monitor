@@ -49,6 +49,24 @@ KEYWORDS = [
     "medical supplies",
     "hospital equipment",
     "theatre equipment",
+    # Gas systems, pipelines/outlets, suction & vacuum, gas delivery —
+    # these often show up as facilities/estates works rather than under a
+    # medical-device CPV code, so they need their own keyword passes.
+    "medical gas pipeline",
+    "medical gas system",
+    "gas pipeline installation",
+    "oxygen pipeline",
+    "vacuum pipeline",
+    "medical vacuum system",
+    "suction unit",
+    "surgical suction",
+    "gas outlet",
+    "gas terminal unit",
+    "bed head unit",
+    "pendant system",
+    "gas manifold",
+    "zone valve",
+    "gas delivery system",
 ]
 
 NOISE_KEYWORDS = [
