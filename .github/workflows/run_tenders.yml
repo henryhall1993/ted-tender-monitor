@@ -63,6 +63,12 @@ jobs:
       - name: Convert CSVs to JSON for website
         run: python scripts/csv_to_json.py
 
+      - name: Add web context to core tenders
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/web_context.py
+
       - name: Save results to repository
         run: |
           git config --global user.name "github-actions"
