@@ -211,6 +211,38 @@
   .tender.adjacent { border-left-color: var(--iso-n2o); }
   .tender.expired { opacity: .6; border-left-color: var(--text-3); }
 
+  /* ── Distributors + web context (secondary layers) ── */
+  details.ext {
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--panel-2);
+    margin-bottom: 8px;
+  }
+  details.ext > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-2);
+  }
+  details.ext > summary::-webkit-details-marker { display: none; }
+  details.ext > summary::before { content: '▸'; display: inline-block; margin-right: 7px; color: var(--text-3); }
+  details.ext[open] > summary::before { content: '▾'; }
+  details.ext > summary:hover { color: var(--text); }
+  details.ext .count { font-family: var(--mono); font-weight: 400; color: var(--text-3); }
+  .ext-body { padding: 2px 14px 12px; font-size: 12.5px; color: var(--text-2); }
+  .ext-text { margin-bottom: 8px; }
+  .ext-note { font-size: 11.5px; color: var(--text-3); margin-top: 10px; }
+  .ext-empty { font-size: 12px; color: var(--text-3); margin-bottom: 8px; }
+  .tag-sec { background: var(--panel); color: var(--text-3); border-color: var(--line); margin-left: 6px; font-weight: 400; }
+  .dist { padding: 9px 0; border-top: 1px solid var(--line); }
+  .dist:first-child { border-top: none; padding-top: 4px; }
+  .dist-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .dist-type { font-size: 11.5px; color: var(--text-3); margin: 1px 0 4px; }
+  .dist-sum { margin-bottom: 4px; }
+  .dist-links { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; }
+
   /* ── Empty / error states ── */
   .empty-state, .error-state {
     border: 1px solid var(--line);
@@ -293,6 +325,7 @@
     Data sourced from <a href="https://ted.europa.eu" target="_blank" rel="noopener">TED (Tenders Electronic Daily)</a> and
     <a href="https://www.find-tender.service.gov.uk" target="_blank" rel="noopener">UK Find a Tender Service</a>, refreshed weekly.
     Category chips reflect ISO 7396-1 medical gas pipeline colour coding, used here purely for visual grouping — not a certification claim.
+    Local-player listings come from public web sources and are not vetted. Web context is AI-written from a web search and is a secondary source; the tender notice itself is the primary record.
     &nbsp;·&nbsp; <a href="index.html">All tenders</a>
   </div>
 </footer>
@@ -321,7 +354,10 @@ const CATEGORIES = [
 const CORE_KEYWORDS = CATEGORIES.filter(c => !c.adjacent).flatMap(c => c.keywords);
 const ADJ_KEYWORDS  = CATEGORIES.filter(c => c.adjacent).flatMap(c => c.keywords);
 
-const TENDERS_URL = 'https://raw.githubusercontent.com/henryhall1993/ted-tender-monitor/main/results/tenders.json';
+const RAW = 'https://raw.githubusercontent.com/henryhall1993/ted-tender-monitor/main/';
+const TENDERS_URL      = RAW + 'results/tenders.json';
+const WEBCTX_URL       = RAW + 'results/web_context.json';   // written by scripts/web_context.py
+const DISTRIBUTORS_URL = RAW + 'distributors.json';          // curated by hand
 
 const COUNTRY_NAMES = {
   SCT:'Scotland', ENG:'England', WLS:'Wales', NIR:'Northern Ireland', GBR:'United Kingdom', UKM:'United Kingdom',
@@ -335,6 +371,9 @@ let activeFilters = new Set();   // empty = all categories
 let showAdjacent = false;        // ventilators / anaesthesia / resuscitation
 let showExpired = false;         // deadline already passed
 let allMatched = [];             // [{ t, tier, status, score }]
+let distributors = [];           // curated local players, from distributors.json
+let distributorsMeta = { updated: '' };
+let webContext = {};             // notice_id -> { found, summary, sources, checked }
 
 function escapeHtml(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -348,6 +387,13 @@ function formatDeadline(d) {
   const date = new Date(d);
   return isNaN(date) ? d : date.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
 }
+function safeUrl(u) {
+  return /^https?:\/\//i.test(u || '') ? u : '';
+}
+function hostOf(u) {
+  try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; }
+}
+
 function titleOf(t) { return (t.original_title || '').toLowerCase(); }
 function bodyOf(t)  { return [t.english_summary, t.what_they_want].filter(Boolean).join(' ').toLowerCase(); }
 function haystackOf(t) { return titleOf(t) + ' ' + bodyOf(t); }
@@ -393,6 +439,66 @@ function visibleItems() {
     });
 }
 
+// Local players in the tender's country, best category overlap first, max 3
+function distributorsFor(t) {
+  const cats = new Set(categoriesFor(t).map(c => c.id));
+  return distributors
+    .filter(d => (d.countries || []).includes(t.country))
+    .map(d => ({ d, overlap: (d.categories || []).filter(c => cats.has(c)).length }))
+    .sort((a, b) => (b.overlap - a.overlap) || ((b.d.website ? 1 : 0) - (a.d.website ? 1 : 0)))
+    .slice(0, 3)
+    .map(x => x.d);
+}
+
+function renderDistributors(t, countryName) {
+  const list = distributorsFor(t);
+  if (!list.length) {
+    return distributors.length
+      ? `<div class="ext-empty">No local distributor data for ${escapeHtml(countryName || 'this country')} yet.</div>`
+      : '';
+  }
+  const items = list.map(d => {
+    const site = safeUrl(d.website), src = safeUrl(d.source_url);
+    const where = [d.type, d.city].filter(Boolean).join(' · ');
+    return `
+      <div class="dist">
+        <div class="dist-name">${escapeHtml(d.name)}</div>
+        <div class="dist-type">${escapeHtml(where)}</div>
+        <div class="dist-sum">${escapeHtml(d.summary)}</div>
+        <div class="dist-links">
+          ${site ? `<a href="${escapeHtml(site)}" target="_blank" rel="noopener">${escapeHtml(hostOf(site))} ↗</a>` : ''}
+          ${src ? `<a href="${escapeHtml(src)}" target="_blank" rel="noopener">Source: ${escapeHtml(d.source_label || hostOf(src))} ↗</a>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+  return `
+    <details class="ext">
+      <summary>Local players to approach in ${escapeHtml(countryName || 'this country')} <span class="count">(${list.length})</span></summary>
+      <div class="ext-body">
+        ${items}
+        <div class="ext-note">Compiled from public web sources${distributorsMeta.updated ? ' on ' + escapeHtml(distributorsMeta.updated) : ''}. Not vetted and not MedTender Watch members — verify before contacting. Several are local manufacturers, so depending on your product they may be partners or competitors.</div>
+      </div>
+    </details>`;
+}
+
+function renderWebContext(t) {
+  const w = webContext[t.notice_id];
+  if (!w || !w.found || !w.summary) return '';
+  const links = (w.sources || []).map(s => {
+    const u = safeUrl(s.url);
+    return u ? `<a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(s.title || hostOf(u))} ↗</a>` : '';
+  }).join('');
+  return `
+    <details class="ext">
+      <summary>Web context <span class="tag tag-sec">secondary source</span></summary>
+      <div class="ext-body">
+        <div class="ext-text">${escapeHtml(w.summary)}</div>
+        ${links ? `<div class="dist-links">${links}</div>` : ''}
+        <div class="ext-note">Written by AI from a web search${w.checked ? ' on ' + escapeHtml(w.checked) : ''}. It is not part of the official notice — check the sources before relying on it.</div>
+      </div>
+    </details>`;
+}
+
 function renderLegend() {
   const el = document.getElementById('legend');
   el.innerHTML = CATEGORIES.map(c => `
@@ -429,7 +535,7 @@ function renderCard(x) {
   const { t, tier, status } = x;
   const cats = categoriesFor(t);
   const country = COUNTRY_NAMES[t.country] || t.country || '';
-  const source = t.source === 'UK' ? 'UK' : (t.source === 'Scotland' ? 'Scotland' : 'EU');
+  const source = t.source || 'EU';
   const days = daysUntil(t.deadline);
   const urgent = status === 'open' && days <= 30;
   const value = parseFloat(t.estimated_value_eur);
@@ -456,6 +562,8 @@ function renderCard(x) {
       </div>
       ${cats.length ? `<div class="t-cats">${cats.map(c => `<span class="cat-chip"><span class="cat-swatch" style="background:${c.color}"></span>${c.label}</span>`).join('')}</div>` : ''}
       <div class="t-summary">${escapeHtml(summary)}</div>
+      ${renderWebContext(t)}
+      ${renderDistributors(t, country)}
       <div class="t-actions">
         ${t.tender_url ? `<a class="btn-view" href="${escapeHtml(t.tender_url)}" target="_blank" rel="noopener">View source notice ↗</a>` : ''}
       </div>
@@ -499,7 +607,16 @@ async function init() {
     const res = await fetch(TENDERS_URL, { cache: 'no-store' });
     if (!res.ok) throw new Error('Feed returned HTTP ' + res.status);
     const data = await res.json();
-    const tenders = data.tenders || [];
+    const tenders = (data.tenders || []).filter(t => t.source !== 'Singapore');  // Singapore rows are past awards, not open tenders
+
+    // Optional layers: if either file is missing the page still works without it
+    const [dRes, wRes] = await Promise.all([
+      fetch(DISTRIBUTORS_URL, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(WEBCTX_URL, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null),
+    ]);
+    distributors = (dRes && dRes.distributors) || [];
+    distributorsMeta = { updated: (dRes && dRes.updated) || '' };
+    webContext = (wRes && wRes.items) || {};
 
     allMatched = tenders
       .map(t => ({ t, tier: tierOf(t) }))
