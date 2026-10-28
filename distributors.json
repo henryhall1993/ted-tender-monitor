@@ -1,13 +1,18 @@
 {
-  "updated": "2026-10-23",
+  "updated": "2026-10-28",
   "note": "Compiled from public web sources on the date shown. Entries are NOT vetted and are NOT MedTender Watch members. Most are local manufacturer-installers, so depending on a US manufacturer's product they may be partners, resellers or competitors. Verify independently before any outreach.",
   "distributors": [
     {
       "id": "pl-agmed",
       "name": "Agmed – Gazy Medyczne sp. z o.o.",
-      "countries": ["POL"],
+      "countries": [
+        "POL"
+      ],
       "type": "Local manufacturer & installer",
-      "categories": ["infra", "oxygen"],
+      "categories": [
+        "infra",
+        "oxygen"
+      ],
       "city": "Nowe Gulczewo",
       "website": "http://agmedgazymedyczne.pl",
       "summary": "Designs and produces medical gas pipeline systems, including oxygen generators, medical columns and bedside panels, plus warranty repairs and design consulting for healthcare facilities.",
@@ -18,22 +23,33 @@
     {
       "id": "pl-inmed",
       "name": "INMED S.A.",
-      "countries": ["POL"],
+      "countries": [
+        "POL"
+      ],
       "type": "Local manufacturer & distributor",
-      "categories": ["infra"],
-      "city": "",
+      "categories": [
+        "infra"
+      ],
+      "city": "Krępice (near Wrocław)",
       "website": "",
-      "summary": "Polish supplier and manufacturer active since 1996. Core business is medical gas pipeline systems, including surgical and anaesthetic columns, bedside panels and medical flow meters, for patient rooms, intensive care and operating theatres.",
-      "source_label": "DevelopmentAid organisation profile",
-      "source_url": "https://www.developmentaid.org/organizations/view/513851/inmed-spolka-akcyjna",
-      "checked": "2026-10-23"
+      "summary": "Polish maker (founded 1996; started with gas pipeline systems in the 1980s) of anaesthesia and surgical columns, bedside panels and medical gas pipeline systems, plus a monitoring system for gas installations. Says its products are in more than half of Polish hospitals and that about 30% of output is exported, including to France, Germany, Belgium, Italy, Czechia, Slovakia and Lithuania. Likely a competitor for pipeline hardware.",
+      "source_label": "Forbes Polska (sponsored article)",
+      "source_url": "https://www.forbes.pl/biznes/nasza-firma-przyciaga-jak-magnes/llz1m1b",
+      "checked": "2026-10-28"
     },
     {
       "id": "ro-tehnoplus",
       "name": "Tehnoplus Service S.R.L.",
-      "countries": ["ROU"],
+      "countries": [
+        "ROU"
+      ],
       "type": "Installer & supplier",
-      "categories": ["infra", "vacuum", "air", "oxygen"],
+      "categories": [
+        "infra",
+        "vacuum",
+        "air",
+        "oxygen"
+      ],
       "city": "Bucharest",
       "website": "http://www.tehnoplus.ro",
       "summary": "Sells and installs cylinder stations, medical air and vacuum stations, pipeline systems and wall or ceiling supply units, as part of turnkey hospital modernisation work.",
@@ -44,9 +60,13 @@
     {
       "id": "ro-linde",
       "name": "Linde Gaz România",
-      "countries": ["ROU"],
+      "countries": [
+        "ROU"
+      ],
       "type": "Gas supplier & installer",
-      "categories": ["oxygen"],
+      "categories": [
+        "oxygen"
+      ],
       "city": "",
       "website": "",
       "summary": "Industrial and medical gas supplier. A 2020 report describes it installing hospital oxygen tanks and distribution systems with its own design and installation crews, so it is more likely a gatekeeper or competitor than a reseller.",
@@ -57,9 +77,13 @@
     {
       "id": "gr-samaras",
       "name": "G. Samaras S.A.",
-      "countries": ["GRC"],
+      "countries": [
+        "GRC"
+      ],
       "type": "Local manufacturer & installer",
-      "categories": ["infra"],
+      "categories": [
+        "infra"
+      ],
       "city": "Thessaloniki",
       "website": "http://www.gsamaras.gr",
       "summary": "Medical gas systems company active since 1968. Covers design and calculations, installation, commissioning and certification, maintenance and training. Branches in Athens and Stuttgart.",
@@ -70,9 +94,14 @@
     {
       "id": "it-itemoxygen",
       "name": "Item Oxygen S.r.l.",
-      "countries": ["ITA"],
+      "countries": [
+        "ITA"
+      ],
       "type": "Installer & supplier",
-      "categories": ["infra", "vacuum"],
+      "categories": [
+        "infra",
+        "vacuum"
+      ],
       "city": "Altamura (BA)",
       "website": "",
       "summary": "Turnkey provider of technical and medical gas plants: design, installation and maintenance of pipeline distribution, vacuum and anaesthetic gas scavenging systems, and supply units.",
@@ -83,9 +112,13 @@
     {
       "id": "it-operamed",
       "name": "Operamed (DS Medica Tecnologie / MD)",
-      "countries": ["ITA"],
+      "countries": [
+        "ITA"
+      ],
       "type": "Local manufacturer & installer",
-      "categories": ["infra"],
+      "categories": [
+        "infra"
+      ],
       "city": "Noale / Scorzè (VE)",
       "website": "",
       "summary": "Italian specialist in medical gas distribution systems: engineering, design, production, installation and maintenance. Mainly active in North-East Italy. One entity installs, the other makes pipeline components.",
@@ -96,15 +129,467 @@
     {
       "id": "cz-mzliberec",
       "name": "MZ Liberec a.s.",
-      "countries": ["CZE"],
+      "countries": [
+        "CZE"
+      ],
       "type": "Local manufacturer & installer",
-      "categories": ["infra", "oxygen", "air", "vacuum"],
-      "city": "Liberec",
+      "categories": [
+        "infra",
+        "oxygen",
+        "air",
+        "vacuum"
+      ],
+      "city": "Rudník (near Vrchlabí)",
       "website": "http://www.mzliberec.cz",
-      "summary": "Designs, manufactures, supplies and installs medical and technical gas systems, including ceiling pendants, oxygen generators, compressors and vacuum stations for operating rooms, ICUs and wards.",
-      "source_label": "AOBP member profile",
-      "source_url": "https://aobp.cz/profil/?id=147",
-      "checked": "2026-10-23"
+      "summary": "Founded in 1957 as Montážní závody Liberec. Designs, manufactures, supplies and installs medical and technical gas distribution: copper pipework, bed-head rails and ceiling-mounted supply stands for operating theatres. Says it leads the Czech and Slovak markets and sells to about 80 countries, with biggest markets in Poland, Slovakia, Croatia, Romania, Scandinavia and the UK. A likely competitor in several of the countries in this tool.",
+      "source_label": "Forbes Česko company profile",
+      "source_url": "https://forbes.cz/z-krkonos-do-nemocnicnich-salu-celeho-sveta-pribeh-firmy-bez-niz-se-neoperuje/",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "de-dehas",
+      "name": "DEHAS Medizintechnik & Projektierung GmbH",
+      "countries": [
+        "DEU"
+      ],
+      "type": "Manufacturer & wholesaler",
+      "categories": [
+        "oxygen",
+        "vacuum"
+      ],
+      "city": "Bad Schwartau",
+      "website": "http://www.dehas.de",
+      "summary": "Manufacturer and wholesaler focused on medical oxygen: LOX systems, pressure reducers, demand valves, oxygen monitoring and mixers, flowmeters and suction units. Production is listed as ISO 13485 certified. The directory listing was last updated in 2015, so check it is still current.",
+      "source_label": "Pflegesuche supplier listing",
+      "source_url": "https://www.pflegesuche.de/lieferant/dehas-medizintechnik-projektierung-gmbh-in-bad-schwartau_541.html",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "de-mbs",
+      "name": "MBS Medizintechnik",
+      "countries": [
+        "DEU"
+      ],
+      "type": "Distributor / online retailer",
+      "categories": [
+        "vacuum",
+        "oxygen"
+      ],
+      "city": "Fuldabrück",
+      "website": "https://www.mbs-medizintechnik.com",
+      "summary": "German online supplier of electric, stationary and manual suction pumps (Boscarol and Weinmann brands) for clinical and pre-hospital use, with an oxygen and accessories category (medical oxygen, pressure reducers, masks). Ships within Germany. Looks more retail and emergency-care than hospital projects.",
+      "source_label": "MBS Medizintechnik shop page",
+      "source_url": "https://www.mbs-medizintechnik.com/medizintechnik/absaugpumpen-und-zubehoer/absaugpumpen/",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "de-mt",
+      "name": "MT Medizin & Technik GmbH",
+      "countries": [
+        "DEU"
+      ],
+      "type": "Local manufacturer & installer",
+      "categories": [
+        "infra"
+      ],
+      "city": "Oschatz",
+      "website": "",
+      "summary": "Develops, plans, manufactures, supplies, installs and services central gas supply systems, anaesthetic gas extraction systems and medical gas outlets. Customers are mainly hospitals and healthcare providers in Germany. Registered as a micro-enterprise.",
+      "source_label": "Implisense company register profile",
+      "source_url": "https://app.implisense.com/de/companies/mt-medizin-technik-gmbh-oschatz--DE3RHAHSPI91",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "se-aspira",
+      "name": "Aspira Medical",
+      "countries": [
+        "SWE"
+      ],
+      "type": "Distributor",
+      "categories": [
+        "infra",
+        "oxygen"
+      ],
+      "city": "",
+      "website": "",
+      "summary": "Swedish distributor of medical supplies offering medical gas systems, oxygen and respiratory care equipment, neonatal care equipment and surgical and examination lights to healthcare providers. Acquired by the Danish gas group Strandmøllen in September 2026.",
+      "source_label": "Main Insights M&A news (Sept 2026)",
+      "source_url": "https://www.mainsights.io/ma-news/danish-medical-gases-group-strandmollen-acquires-swedish-medical-equipment-distributor-aspira-medical",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "dk-strandmollen",
+      "name": "Strandmøllen",
+      "countries": [
+        "DNK",
+        "SWE"
+      ],
+      "type": "Gas supplier",
+      "categories": [],
+      "city": "",
+      "website": "https://www.strandmollen.com/",
+      "summary": "Denmark-based producer and supplier of industrial and medical gases with operations in Sweden and Germany. It owns the distributor Aspira Medical. Not confirmed as a pipeline installer or device distributor, so treat as a possible gatekeeper or partner for gas supply, not a device reseller.",
+      "source_label": "Main Insights M&A news (Sept 2026)",
+      "source_url": "https://www.mainsights.io/ma-news/danish-medical-gases-group-strandmollen-acquires-swedish-medical-equipment-distributor-aspira-medical",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "fr-airliquide",
+      "name": "Air Liquide Santé France",
+      "countries": [
+        "FRA"
+      ],
+      "type": "Gas supplier & network specialist",
+      "categories": [
+        "infra",
+        "oxygen",
+        "air",
+        "vacuum"
+      ],
+      "city": "",
+      "website": "https://fr.healthcare.airliquide.com",
+      "summary": "Medical gas supplier that runs training for hospital technicians on gas distribution networks: oxygen and medical air sources, vacuum units and alarms, zone valves and wall outlets. Likely a gatekeeper or competitor for pipeline work rather than a reseller.",
+      "source_label": "Air Liquide Santé France HC20 training brochure (2026)",
+      "source_url": "https://fr.healthcare.airliquide.com/sites/alh_fr/files/2026-02/formation_hc20_air_liquide_sante_france_2026_0.pdf",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "fr-copeps",
+      "name": "Copeps",
+      "countries": [
+        "FRA"
+      ],
+      "type": "Medical gas network specialist",
+      "categories": [
+        "infra"
+      ],
+      "city": "",
+      "website": "https://copeps.fr",
+      "summary": "Presents itself as a French specialist in medical gas networks. This is based on the title of its own web page. The page could not be opened to confirm services or products, so verify before any outreach.",
+      "source_label": "Copeps website (page title only)",
+      "source_url": "https://copeps.fr/actualites/gaz-medicaux-entrepreneur/",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "es-carburos",
+      "name": "Carburos Médica (Carburos Metálicos)",
+      "countries": [
+        "ESP",
+        "PRT"
+      ],
+      "type": "Gas supplier & installer",
+      "categories": [
+        "oxygen",
+        "infra"
+      ],
+      "city": "Madrid",
+      "website": "",
+      "summary": "Medical division of the gas company Carburos Metálicos, operating in Spain and Portugal. Supplies oxygen and nitrogen and offers installation, maintenance and traceability services for medical gas installations. Vacuum and suction are not mentioned. Likely a gatekeeper or competitor on pipeline work.",
+      "source_label": "Redacción Médica interview (2014)",
+      "source_url": "https://www.redaccionmedica.com/empresas/tecnologia-sanitaria/20140331/ofrecemos-un-servicio-completo-producto-instalacion-mantenimiento/326246_0.amp.html",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "es-enferpuntual",
+      "name": "EnferPuntual Medical S.L.",
+      "countries": [
+        "ESP"
+      ],
+      "type": "Distributor (Dräger directory)",
+      "categories": [],
+      "city": "Madrid",
+      "website": "",
+      "summary": "Listed as a distributor in Dräger's Spanish contact directory. The listing does not name specific products, so confirm whether it handles gas, suction or oxygen products.",
+      "source_label": "Dräger Spain contact finder",
+      "source_url": "https://www.draeger.com/es_es/Contact-Finder/Enferpuntual-Medical-S-L-/35f30f37-eaac-4c60-a389-48978f7b4aa0",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "es-celta",
+      "name": "Celta Ingenieros",
+      "countries": [
+        "ESP"
+      ],
+      "type": "Distributor (Dräger directory)",
+      "categories": [],
+      "city": "Cambre (A Coruña)",
+      "website": "",
+      "summary": "Listed as a distributor in Dräger's Spanish contact directory. The listing does not name specific products, so confirm whether it handles gas, suction or oxygen products.",
+      "source_label": "Dräger Spain contact finder",
+      "source_url": "https://www.draeger.com/es_es/Contact-Finder/Celta-Ingenieros-/e4c154c3-1d26-44f0-9593-2705924f45af",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "es-fermon",
+      "name": "Fermon Indis",
+      "countries": [
+        "ESP"
+      ],
+      "type": "Distributor (Dräger directory)",
+      "categories": [],
+      "city": "San Cristóbal de La Laguna (Tenerife)",
+      "website": "",
+      "summary": "Listed as a distributor in Dräger's Spanish contact directory, based in the Canary Islands. The listing does not name specific products, so confirm whether it handles gas, suction or oxygen products.",
+      "source_label": "Dräger Spain contact finder",
+      "source_url": "https://www.draeger.com/es_es/Contact-Finder/Fermon-Indis-/5c4e1e4f-5569-490b-90e5-d6b2d742e8bb",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "pl-medseven",
+      "name": "Medseven Sp. z o.o.",
+      "countries": [
+        "POL"
+      ],
+      "type": "Distributor",
+      "categories": [
+        "oxygen",
+        "vacuum"
+      ],
+      "city": "Solec Kujawski",
+      "website": "",
+      "summary": "Medical equipment distributor focused on respiratory therapy and long-term home care, with wholesale and retail sales, rental, technical service and training. Its service department repairs oxygen concentrators, medical suction devices and ventilators. Supplies about 2,000 home-ventilated patients nationwide. Appears to be mainly a home-care channel rather than a hospital-project supplier.",
+      "source_label": "Forbes Polska Diamonds profile (2022)",
+      "source_url": "https://www.forbes.pl/diamenty/wizytowki/2022/medseven-w-trosce-o-komfort-oddechu/wd2y2ky",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "pl-meden",
+      "name": "Meden-Inmed Sp. z o.o.",
+      "countries": [
+        "POL"
+      ],
+      "type": "Distributor / online retailer",
+      "categories": [
+        "vacuum",
+        "oxygen"
+      ],
+      "city": "Koszalin",
+      "website": "https://sklep.meden.com.pl",
+      "summary": "Medical equipment supplier with an online shop. Its range includes Hersill medical suction units, described as used in both home and hospital settings, and DeVilbiss oxygen concentrators. The page does not mention wholesale or hospital tenders.",
+      "source_label": "Meden shop: medical suction units",
+      "source_url": "https://sklep.meden.com.pl/1422-ssaki-medyczne",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "ro-tms",
+      "name": "TMS – Top Medical Supplier",
+      "countries": [
+        "ROU"
+      ],
+      "type": "Distributor",
+      "categories": [
+        "oxygen",
+        "anaes"
+      ],
+      "city": "Bucharest",
+      "website": "",
+      "summary": "Privately owned medical device distributor founded in 2010. Range covers airway management, anaesthesia and intensive care consumables, emergency resuscitation, oxygen therapy and nebulisation, and CPAP and non-invasive ventilation. Customers include county, municipal and university hospitals and private clinics. Sole Romanian distributor of Intersurgical. Suction, vacuum and medical gas are not mentioned.",
+      "source_label": "TMS company presentation (2024)",
+      "source_url": "https://sraticongres.ro/wp-content/uploads/2024/04/site-Prezentare-TMS-Top-Medical-Supplier-RO.pdf",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "gr-thomadaki",
+      "name": "Oxygono2 – Thomadaki Efstratiou Bros O.E.",
+      "countries": [
+        "GRC"
+      ],
+      "type": "Gas supplier & installer",
+      "categories": [
+        "oxygen",
+        "infra"
+      ],
+      "city": "Thessaloniki",
+      "website": "",
+      "summary": "Thessaloniki firm active in medical oxygen, medical devices and gases: cylinder refilling, device rental, installation of medical gas systems in hospitals and clinics, and equipment maintenance and repair. Says it serves all of Greece.",
+      "source_label": "Vrisko business directory listing",
+      "source_url": "https://www.vrisko.gr/advdetails/b6bc7j0643debc437e_a_35fb0aj6k7f",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "uk-shj",
+      "name": "SHJ",
+      "countries": [
+        "GBR",
+        "SCT"
+      ],
+      "type": "Installer",
+      "categories": [
+        "infra",
+        "vacuum",
+        "oxygen"
+      ],
+      "city": "Chesham (offices in Dudley, Rotherham, Aberdeen)",
+      "website": "https://www.shj.co.uk",
+      "summary": "Installs medical gas pipelines in hospitals: pipework for new and upgrade projects, medical vacuum and air plant, manifolds, alarms, anaesthetic gas scavenging and gas flow monitoring, plus an oxygen monitoring product. Names oxygen ring main projects at Hillingdon and Doncaster hospitals. Offers nationwide UK coverage.",
+      "source_label": "SHJ company website",
+      "source_url": "https://www.shj.co.uk/installation/",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "de-medgas",
+      "name": "MEDGAS-Technik GmbH",
+      "countries": [
+        "DEU",
+        "AUT",
+        "CHE"
+      ],
+      "type": "Manufacturer & installer",
+      "categories": [
+        "air",
+        "vacuum",
+        "infra"
+      ],
+      "city": "Berndroth",
+      "website": "",
+      "summary": "Described by Atlas Copco as a manufacturer, distributor, installer and service provider of medical air and medical vacuum systems and pipeline equipment, with branch offices in Germany, Austria and Switzerland. Atlas Copco announced its acquisition in July 2020, so it is now part of a large compressor group.",
+      "source_label": "Atlas Copco press release (July 2020)",
+      "source_url": "https://www.atlascopcogroup.com/en/media/press-releases/2020/20200730-medgas",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "fr-gpf",
+      "name": "GPF – Gaz Purs et Fluides",
+      "countries": [
+        "FRA"
+      ],
+      "type": "Network installer & maintainer",
+      "categories": [
+        "infra",
+        "oxygen",
+        "air",
+        "vacuum"
+      ],
+      "city": "Plailly",
+      "website": "",
+      "summary": "Founded in 1976. Designs, installs, maintains and repairs networks that distribute medical fluids: air, oxygen and medical vacuum. Celebrated its 50th anniversary in June 2026.",
+      "source_label": "La Gazette France (2026)",
+      "source_url": "https://www.lagazettefrance.fr/article/gpf-fete-ses-50-ans-au-service-de-la-vie",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "fr-novair",
+      "name": "Novair S.A.S.",
+      "countries": [
+        "FRA"
+      ],
+      "type": "Manufacturer & installer",
+      "categories": [
+        "oxygen",
+        "air",
+        "vacuum",
+        "infra"
+      ],
+      "city": "Sevran",
+      "website": "",
+      "summary": "French compressed gas and vacuum specialist. Its Novair Medical division makes medical gas systems for healthcare facilities, including PSA oxygen generators, medical vacuum systems and medical compressed air plants, and describes its offer as 'from source to patient'. Suction equipment is not mentioned.",
+      "source_label": "HealthManagement.org company profile",
+      "source_url": "https://healthmanagement.org/company/view/206546",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "it-igm",
+      "name": "IGM – Impianti Gas Medicali S.r.l.",
+      "countries": [
+        "ITA"
+      ],
+      "type": "Installer",
+      "categories": [
+        "infra"
+      ],
+      "city": "Naples",
+      "website": "http://www.igmimpianti.it",
+      "summary": "Naples company whose stated purpose is making, supplying, installing and maintaining systems for medical gases, pure gases, technical gases and evacuation. The register profile says it has been on the market for 41 years.",
+      "source_label": "Atoka company register profile",
+      "source_url": "https://atoka.io/public/it/azienda/igm-impianti-gas-medicali-srl/49dd7b43100b",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "it-idea",
+      "name": "I.d.e.a. Gas Systems S.r.l.",
+      "countries": [
+        "ITA"
+      ],
+      "type": "Installer",
+      "categories": [
+        "infra"
+      ],
+      "city": "Arcore (MB)",
+      "website": "",
+      "summary": "Designs and installs gas distribution systems (compressed, liquefied and high-vacuum) for pharmaceutical, hospital, food and industrial customers. Small firm: 11 employees and about €1.7M revenue per the register profile. Not clearly a medical gas specialist.",
+      "source_label": "Atoka company register profile",
+      "source_url": "https://atoka.io/public/it/azienda/idea-gas-systems-srl/a09b159e08c8",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "bg-sol",
+      "name": "SOL Bulgaria",
+      "countries": [
+        "BGR"
+      ],
+      "type": "Gas supplier & installer",
+      "categories": [
+        "oxygen",
+        "infra"
+      ],
+      "city": "Sofia",
+      "website": "",
+      "summary": "Bulgarian subsidiary of the Italian SOL Group. Supplies hospitals, clinics and labs with oxygen, nitrous oxide and other approved medical gases, and plans, builds and maintains centralised gas systems for healthcare facilities. Likely a gatekeeper or competitor on pipeline work.",
+      "source_label": "MachTech company page",
+      "source_url": "https://machtech.bg/en/main/sol-bulgaria/",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "se-medicvent",
+      "name": "Medicvent",
+      "countries": [
+        "SWE"
+      ],
+      "type": "Local manufacturer",
+      "categories": [
+        "anaes"
+      ],
+      "city": "Umeå",
+      "website": "",
+      "summary": "Founded in 1983. Makes systems for evacuating air pollutants in healthcare, mainly a patented double mask system for anaesthesia and childbirth and central waste-gas and diathermy smoke evacuation. Narrow niche, not a general medical gas or suction supplier. Delivering to Högsbo hospital in Gothenburg.",
+      "source_label": "Umeå Biotech Incubator press release",
+      "source_url": "https://mynewsdesk.com/umeaa-biotech-incubator/pressreleases/swedish-medtech-company-medicvent-strenghtens-market-position-with-new-prestigious-assignment-3276512",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "at-habel",
+      "name": "HABEL Medizintechnik",
+      "countries": [
+        "AUT"
+      ],
+      "type": "Distributor",
+      "categories": [
+        "oxygen",
+        "anaes"
+      ],
+      "city": "Vienna",
+      "website": "",
+      "summary": "Family-run company active for over 65 years across Austria. Supplies devices and consumables for clinics, focused on ventilation, anaesthesia, sleep and intensive care medicine, and for home care: sleep apnoea, home ventilation and oxygen therapy. Suction and medical gas products are not mentioned.",
+      "source_label": "Jobs.at employer profile",
+      "source_url": "https://www.jobs.at/a/habel-medizintechnik",
+      "checked": "2026-10-28"
+    },
+    {
+      "id": "ch-anandic",
+      "name": "Anandic Medical Systems AG",
+      "countries": [
+        "CHE"
+      ],
+      "type": "Distributor",
+      "categories": [
+        "anaes"
+      ],
+      "city": "Feuerthalen (3 locations)",
+      "website": "",
+      "summary": "Describes itself as a leading Swiss supplier of anaesthesia and intensive care equipment and supports the Swiss hospital market from three locations. Became Aerogen's Swiss distributor. The page does not list specific suction, vacuum or oxygen products.",
+      "source_label": "Aerogen announcement",
+      "source_url": "https://www.aerogen.com/about/blog/aerogen-announces-new-distribution-partnership-for-switzerland-with-anandic-medical-systems-ag",
+      "checked": "2026-10-28"
     }
   ]
 }
